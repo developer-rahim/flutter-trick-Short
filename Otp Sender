@@ -1,0 +1,210 @@
+import 'package:fashion_design/otp_verification/otp_verification_Page.dart';
+import 'package:flutter/material.dart';
+
+import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
+
+import 'package:sms_autofill/sms_autofill.dart';
+import 'package:flutter_countdown_timer/index.dart';
+
+import 'package:flutter/material.dart';
+class SendOTPScreen extends StatelessWidget {
+  const SendOTPScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    TextEditingController mobileNumber = TextEditingController();
+      int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 30;
+    var appSignatureID;
+    void submit() async {
+      if (mobileNumber.text == "") return;
+
+      appSignatureID = await SmsAutoFill().getAppSignature;
+      Map sendOtpData = {
+        "mobile_number": mobileNumber.text,
+        "app_signature_id": appSignatureID
+      };
+      print(sendOtpData);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => VerifyOTPScreen(
+                  txtFormText: mobileNumber.text,
+                  appSingnatureID: appSignatureID,
+                )),
+      );
+    }
+
+    return Scaffold(
+      backgroundColor: Colors.pink,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: const Color(0xFFC2C0C0),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: TextField(
+                    controller: mobileNumber,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      hintText: "Enter Mobile Number",
+                     
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              ElevatedButton(
+                onPressed: submit,
+                child: const Text("Submit"),
+              )
+           
+           , 
+          CountdownTimer(
+            endTime: endTime,
+            widgetBuilder: (_, CurrentRemainingTime? time) {
+              if (time == null) {
+                return Text('Game over');
+              }
+              return Text(
+                  'days: [ ${time.days} ], hours: [ ${time.hours} ], min: [ ${time.min} ], sec: [ ${time.sec} ]');
+            },
+          ),
+      
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:sms_autofill/sms_autofill.dart';
+
+class VerifyOTPScreen extends StatefulWidget {
+  VerifyOTPScreen({required this.txtFormText, required this.appSingnatureID});
+
+  String? txtFormText;
+  String? appSingnatureID;
+
+  @override
+  State<VerifyOTPScreen> createState() => _VerifyOTPScreenState();
+}
+
+class _VerifyOTPScreenState extends State<VerifyOTPScreen> with CodeAutoFill {
+  String codeValue = "";
+  int secondsRemaining = 30;
+  bool enableResend = false;
+  Timer? timer;
+  @override
+  void codeUpdated() {
+    print("Update code $code");
+    setState(() {
+      print("codeUpdated");
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    listenOtp();
+
+    timer = Timer.periodic(Duration(seconds: 1), (_) {
+      if (secondsRemaining != 0) {
+        setState(() {
+          secondsRemaining--;
+        });
+      } else {
+        setState(() {
+          enableResend = true;
+        });
+      }
+    });
+  }
+
+  void listenOtp() async {
+    await SmsAutoFill().unregisterListener();
+    listenForCode();
+    await SmsAutoFill().listenForCode;
+    print("OTP listen Called");
+
+    setState(() {
+      secondsRemaining = 30;
+      enableResend = false;
+    });
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    SmsAutoFill().unregisterListener();
+    print("unregisterListener");
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(),
+      body: Padding(
+        padding: const EdgeInsets.all(30.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Center(
+              child: PinFieldAutoFill(
+                currentCode: codeValue,
+                codeLength: 4,
+                onCodeChanged: (code) {
+                  print("onCodeChanged $code");
+                  setState(() {
+                    codeValue = code.toString();
+                  });
+                },
+                onCodeSubmitted: (val) {
+                  print("onCodeSubmitted $val");
+                },
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            ElevatedButton(
+                onPressed: () {
+                  print(codeValue);
+
+                  print(widget.txtFormText);
+                  print(widget.appSingnatureID);
+                },
+                child: const Text("Verify OTP")),
+            ElevatedButton(
+              onPressed: enableResend ? listenOtp : null,
+              child: enableResend
+                  ? Text("Resend ")
+                  : Text(
+                      'Resend after $secondsRemaining seconds',
+                      style: TextStyle(color: Colors.black, fontSize: 15),
+                    ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
