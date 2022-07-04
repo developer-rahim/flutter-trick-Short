@@ -1,0 +1,138 @@
+class FashionHomePage extends StatefulWidget {
+  const FashionHomePage({Key? key}) : super(key: key);
+
+  @override
+  State<FashionHomePage> createState() => _FashionHomePageState();
+}
+
+class _FashionHomePageState extends State<FashionHomePage> {
+  @override
+  void initState() {
+    BannerProvider bannerProvider =
+        Provider.of<BannerProvider>(context, listen: false);
+    bannerProvider.getBannerProvide();
+    
+
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    BannerProvider bannerProvider = Provider.of<BannerProvider>(
+      context,
+    );
+   
+    return Scaffold(
+        body: ListView.builder(
+          itemCount: bannerProvider.bannerList.length,
+          itemBuilder: ((context, index) {
+          return Container(child: Column(children: [
+  Container(
+                          height: 130,
+                          child: bannerProvider.isLoading == true
+                              ? Center(
+                                  child: SpinKitThreeBounce(
+                                    itemBuilder: ((context, index) {
+                                      return DecoratedBox(
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(15),
+                                              color: index.isEven
+                                                  ? Colors.red
+                                                  : Colors.green));
+                                    }),
+                                  ),
+                                )
+                              : bannerProvider.bannerList.length != 0
+                                  ? Image(
+                                      image: NetworkImage('https://bppshops.com/' +
+                                          '${bannerProvider.bannerList[0].bennarImg}')
+                                      //  AssetImage('assets/banner.png'),
+                                      ,
+                                      fit: BoxFit.fill,
+                                      //
+                                    )
+                                  : SizedBox(),
+                        ),
+
+          ],),);
+        })));}}
+
+
+class BannerProvider extends ChangeNotifier {
+  List<Banners> bannerList=[];
+  List<Banners> get _bannerList=> bannerList ;
+bool isLoading=false;
+  getBannerProvide() async {
+    isLoading=true;
+    final data = await BannerService().getBannerService();
+
+    bannerList = data.banner!;
+    isLoading=false;
+
+    notifyListeners();
+  }
+}
+// To parse this JSON data, do
+//
+//     final bannerModel = bannerModelFromJson(jsonString);
+
+
+
+BannerModel bannerModelFromJson(String str) => BannerModel.fromJson(json.decode(str));
+
+String bannerModelToJson(BannerModel data) => json.encode(data.toJson());
+
+class BannerModel {
+    BannerModel({
+        this.banner,
+    });
+
+    List<Banners>? banner;
+
+    factory BannerModel.fromJson(Map<String, dynamic> json) => BannerModel(
+        banner: List<Banners>.from(json["banner"].map((x) => Banners.fromJson(x))),
+    );
+
+    Map<String, dynamic> toJson() => {
+        "banner": List<dynamic>.from(banner!.map((x) => x.toJson())),
+    };
+}
+
+class Banners {
+    Banners({
+        this.bennarImg
+    });
+
+    String ?bennarImg;
+
+    factory Banners.fromJson(Map<String, dynamic> json) => Banners(
+        bennarImg: json["bennar_img"],
+    );
+
+    Map<String, dynamic> toJson() => {
+        "bennar_img": bennarImg,
+    };
+}
+
+
+
+class BannerService {
+  Future<BannerModel> getBannerService() async {
+    Map<String, dynamic>? result;
+    try {
+      String url = 'https://bppshops.com/api/fashion/banner';
+      http.Response response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+     result = convert.jsonDecode(response.body);
+        print( 'Banner data: $result');
+        return BannerModel.fromJson(result!) ;
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    return BannerModel.fromJson(result!);
+  }
+}
