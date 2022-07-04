@@ -1,0 +1,146 @@
+    final dateTime = DateTime.now();
+    var date = (DateTimeFormat.format(dateTime, format: 'D, M j, H:i'));
+    
+    ....Time Convert....
+                final hotDealsProvider =
+                              Provider.of<HotDealsProvider>(
+                            context,
+                          );
+                          DateTime flashEndTime = DateTime.parse(hotDealsProvider
+                              .hotDealList[_current_slider].endDate
+                              .toString());
+                          DateTime flashStartTime =
+                              DateTime.parse(hotDealsProvider.hotDealList[_current_slider].startDate.toString());
+                          int daysBetween_wrong2(
+                              DateTime flashEndTime, DateTime flashStartTime) {
+                            flashEndTime =
+                                DateTime(flashEndTime.year, flashEndTime.month, flashEndTime.day);
+                            flashStartTime =
+                                DateTime(flashStartTime.year, flashStartTime.month, flashStartTime.day);
+                            return DateTime.utc(
+                                    flashEndTime.year, flashEndTime.month, flashEndTime.day)
+                                .difference(DateTime.utc(
+                                    flashStartTime.year, flashStartTime.month, flashStartTime.day))
+                                .inSeconds;
+                          }
+
+                          int endTime = DateTime.now().millisecondsSinceEpoch +
+                              1000 *
+                                  int.parse(daysBetween_wrong2(flashEndTime, flashStartTime)
+                                      .toString());
+                                      
+                                      
+                                      
+                                      ..Time Show....
+                                      
+                                             Padding(
+                                padding: const EdgeInsets.only(left: 16),
+                                child: CountdownTimer(
+                                    endTime: endTime,
+                                    widgetBuilder: (_, CurrentRemainingTime? time) {
+                                      if (time == null) {
+                                        return Text('Game over');
+                                      }
+                                      // return Text(
+                                      //     'days: [ ${time.days} ], hours: [ ${time.hours} ], min: [ ${time.min} ], sec: [ ${time.sec} ]');
+                                      return 
+                                      Padding(
+                                  padding: const EdgeInsets.only(left: 16),
+                                  child: Row(
+                                    children: [
+                                      Column(
+                                        children: [
+                                          Container(
+                                              decoration: BoxDecoration(
+                                                  color:
+                                                      appColor().yellow_color,
+                                                  borderRadius:
+                                                      BorderRadius.circular(5)),
+                                              height: 25,
+                                              width: 27,
+                                              child: Center(
+                                                child: Text(
+                                                  '${time.days}',
+                                                ),
+                                              )),
+                                          Text(
+                                            'Days',
+                                            style: TextStyle(fontSize: 12),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Column(
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                                color: appColor().yellow_color,
+                                                borderRadius:
+                                                    BorderRadius.circular(5)),
+                                            height: 25,
+                                            width: 27,
+                                            child: Center(
+                                                child: Text(
+                                              '${time.hours}',
+                                            )),
+                                          ),
+                                          Text(
+                                            'Hours',
+                                            style: TextStyle(fontSize: 12),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Column(
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                                color: appColor().yellow_color,
+                                                borderRadius:
+                                                    BorderRadius.circular(5)),
+                                            height: 25,
+                                            width: 27,
+                                            child: Center(
+                                                child: Text(
+                                              '${time.min}',
+                                            )),
+                                          ),
+                                          Text(
+                                            'Min',
+                                            style: TextStyle(fontSize: 12),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Column(
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                                color: appColor().yellow_color,
+                                                borderRadius:
+                                                    BorderRadius.circular(5)),
+                                            height: 25,
+                                            width: 27,
+                                            child: Center(
+                                                child: Text(
+                                              '${time.sec}',
+                                            )),
+                                          ),
+                                          Text(
+                                            'Sec',
+                                            style: TextStyle(fontSize: 12),
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  )); 
+                                    },
+                                  ),
+                              ),
+                                      
