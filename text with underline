@@ -1,0 +1,19 @@
+   // Expanded(
+          //   child: Container(
+          //   child: Column(
+          //     children: const[Text('SPECIAL DEALS', style: TextStyle(
+          //           shadows: [
+          //             Shadow(
+          //                 color: Colors.red,
+          //                 offset: Offset(0, -5))
+          //           ],
+          //           color: Colors.transparent,
+          //           decoration:
+          //           TextDecoration.underline,
+          //           decorationColor: Colors.red,
+          //           decorationThickness: 2,
+          //           decorationStyle:
+          //           TextDecorationStyle.solid,
+          //         ),)],
+          //   )),
+          // )
