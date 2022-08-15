@@ -1,0 +1,23 @@
+ Row buildRatingWithCountRow() {
+    return Row(
+      children: [
+        RatingBar(
+          itemSize: 14.0,
+          ignoreGestures: true,
+          initialRating: double.parse(_shopDetails.rating.toString()),
+          direction: Axis.horizontal,
+          allowHalfRating: true,
+          itemCount: 5,
+          ratingWidget: RatingWidget(half: Icon(FontAwesome.star, color: Colors.amber),
+            full: Icon(FontAwesome.star, color: Colors.amber),
+            empty:
+                Icon(FontAwesome.star, color: Color.fromRGBO(224, 224, 225, 1)),
+          ),
+          itemPadding: EdgeInsets.only(right: 4.0),
+          onRatingUpdate: (rating) {
+            print(rating);
+          },
+        ),
+      ],
+    );
+  }
