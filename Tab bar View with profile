@@ -1,0 +1,469 @@
+import 'dart:io';
+
+import 'package:ddba/view/about_page.dart';
+import 'package:ddba/view/component/app_style.dart';
+import 'package:ddba/view/home_screen.dart';
+import 'package:ddba/view/notification.dart';
+import 'package:ddba/view/payments_receipt_list_screen.dart';
+import 'package:ddba/view/social_info.dart';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+
+import 'package:image_picker/image_picker.dart';
+
+import 'drawer/nav_drawer.dart';
+
+class ProfilePage extends StatefulWidget {
+  @override
+  _ProfilePageState createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage>
+    with SingleTickerProviderStateMixin {
+  TabController? _tabController;
+  TextEditingController nameController = TextEditingController();
+
+  TextEditingController emailController = TextEditingController();
+  TextEditingController birthDayController = TextEditingController();
+  TextEditingController nidController = TextEditingController();
+  TextEditingController locationController = TextEditingController();
+  TextEditingController joindateController = TextEditingController();
+  File? _image;
+
+  final _picker = ImagePicker();
+  Future<void> _openImagePicker() async {
+    final XFile? pickedImage =
+        await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedImage != null) {
+      setState(() {
+        _image = File(pickedImage.path);
+      });
+    }
+  }
+
+  int currentIndex = -1;
+
+  bool isUpdate = false;
+  bool showPassword = false;
+  bool isNomineeInfo = true;
+  bool isProfessionalInfo = false;
+  bool isSocialInfo = false;
+  @override
+  void initState() {
+    _tabController = TabController(length: 3, vsync: this);
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _tabController!.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      //  backgroundColor: Colors.grey[300],
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text(
+            'Accont',
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+          backgroundColor:
+              primaryColor, //Theme.of(context).scaffoldBackgroundColor,
+          elevation: 1,
+          // leading: IconButton(
+          //   icon: Icon(
+          //     Icons.arrow_back,
+          //     color: Colors.green,
+          //   ),
+          //   onPressed: () {},
+          // ),
+          actions: [
+            IconButton(
+              icon: Icon(
+                Icons.edit,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                setState(() {
+                  isUpdate = !isUpdate;
+                });
+
+                // Navigator.of(context).push(MaterialPageRoute(
+                //     builder: (BuildContext context) => SettingsPage())
+                //   );
+              },
+            ),
+          ],
+        ),
+        body: Container(
+          padding: EdgeInsets.only(left: 16, top: 25, right: 16),
+          child: GestureDetector(
+            onTap: () {
+              //  FocusScope.of(context).unfocus();
+            },
+            child: Column(
+              children: [
+                // Text(
+                //   "Edit Profile",
+                //   style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
+                // ),
+                // SizedBox(
+                //   height: 15,
+                // ),
+                Center(
+                  child: Stack(
+                    children: [
+                      Container(
+                        width: 130,
+                        height: 130,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                              width: 4,
+                              color: Theme.of(context).scaffoldBackgroundColor),
+                          boxShadow: [
+                            BoxShadow(
+                                spreadRadius: 2,
+                                blurRadius: 10,
+                                color: Colors.black.withOpacity(0.1),
+                                offset: Offset(0, 10))
+                          ],
+                          shape: BoxShape.circle,
+
+                          // image: DecorationImage(
+                          //     fit: BoxFit.cover,
+                          //     image:
+                          //     //  NetworkImage(
+                          //     //   "https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png",
+                          //     // )
+                        ),
+                        child: _image != null
+                            ? Center(
+                                child: Container(
+                                    decoration:
+                                        BoxDecoration(shape: BoxShape.circle),
+                                    child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(50),
+                                        child: Image.file(
+                                          _image!,
+                                          fit: BoxFit.fill,
+                                          width: double.infinity,
+                                        ))))
+                            : Center(
+                                child: Container(
+                                decoration:
+                                    BoxDecoration(shape: BoxShape.circle),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(50),
+                                  child: Image.network(
+                                    "https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png",
+                                  ),
+                                ),
+                              )
+                                // const Text('Please select an image')
+
+                                ),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: isUpdate
+                            ? Container(
+                                height: 40,
+                                width: 40,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    width: 4,
+                                    color: Theme.of(context)
+                                        .scaffoldBackgroundColor,
+                                  ),
+                                  color: secondaryColor,
+                                ),
+                                child: isUpdate
+                                    ? GestureDetector(
+                                        onTap: () {
+                                          _openImagePicker;
+                                          print(_openImagePicker());
+                                        },
+                                        child: Center(
+                                          child: Icon(
+                                            Icons.edit,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      )
+                                    : Container(),
+                              )
+                            : Container(),
+                      )
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+
+                Container(
+                  width: double.infinity,
+                  height: 40,
+                  decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(10.0)),
+                  child: TabBar(
+                    controller: _tabController,
+                    padding: EdgeInsets.symmetric(horizontal: 0),
+                    isScrollable: true,
+                    indicator: BoxDecoration(
+                        color: secondaryColor,
+                        borderRadius: BorderRadius.circular(5.0)),
+                    labelColor: Colors.white,
+                    unselectedLabelColor: Colors.black,
+                    tabs: [
+                      Tab(
+                        text: 'Nominee Info',
+                      ),
+                      Tab(
+                        text: 'Professional Info',
+                      ),
+                      Tab(
+                        text: 'Social Info',
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: TabBarView(controller: _tabController, children: [
+                    SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          SizedBox(height: 20,),
+                          buildTextField("Full Name", "Abdul Rahim", false,
+                              false, nameController),
+                          buildTextField("Email", "rahimsr983@gmail.com", false,
+                              false, emailController),
+
+                          buildTextField("Date Of Birth", "12/11/1996", false,
+                              false, birthDayController),
+                          //  buildTextField("Password", "********", true),
+                          buildTextField('Nid ', 'Nid Number', false, false,
+                              nidController),
+                          buildTextField(
+                              "Location",
+                              "Mogbazer, Dhaka,Bangladesh",
+                              false,
+                              false,
+                              locationController),
+                          // SizedBox(
+                          //   height: 5,
+                          // ),
+                          isUpdate
+                              ? Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    MaterialButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          isUpdate = false;
+                                        });
+                                      },
+                                      color: secondaryColor,
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 50),
+                                      elevation: 2,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20)),
+                                      child: Text(
+                                        'Save',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            letterSpacing: 2.2,
+                                            color: Colors.white),
+                                      ),
+                                    )
+                                  ],
+                                )
+                              : Container(),
+                        ],
+                      ),
+                    ),
+                    Column(
+                      children: [SizedBox(height: 20,),
+                        buildTextField("Joining date", "13/06/2022", false,
+                            false, joindateController),
+
+                        //  buildTextField("Password", "********", true),
+
+                        isUpdate
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  MaterialButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        isUpdate = false;
+                                      });
+                                    },
+                                    color: secondaryColor,
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 50),
+                                    elevation: 2,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(20)),
+                                    child: Text(
+                                      'Save',
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          letterSpacing: 2.2,
+                                          color: Colors.white),
+                                    ),
+                                  )
+                                ],
+                              )
+                            : Container(),
+                     ],
+                    ),
+                    //  Text('data'),
+                    SocialInfoPage()
+                  ]),
+                ),
+
+              ],
+            ),
+          ),
+        ),
+        drawer: NavigationDrawer(),
+        bottomNavigationBar: BottomAppBar(
+          shape: const CircularNotchedRectangle(),
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ...MainMenuModel.list.map(
+                (MainMenuModel data) {
+                  return data.isBlank
+                      ? const SizedBox(
+                          width: 10,
+                        )
+                      : InkWell(
+                          onTap: () {
+                            setState(() {
+                              currentIndex = data.index;
+                              if (currentIndex == 0) {
+                                Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (_) => HomeScreen()),
+                                    (route) => false);
+                                //Navigator.push(context, MaterialPageRoute(builder: (context)=>HomeScreen()));
+                              }
+                              if (currentIndex == 1) {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            Notification_Screen()));
+                              }
+                              if (currentIndex == 2) {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ProfilePage()));
+                              }
+                              if (currentIndex == 3) {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => AboutPage()));
+                              }
+                            });
+                            // ignore: avoid_print
+                            print(data.index.toString());
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 10),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                //SizedBox(height: 10,),
+                                Icon(
+                                  data.icon,
+                                  color: currentIndex == data.index
+                                      ? primaryColor
+                                      : secondaryColor,
+                                ),
+                                const SizedBox(
+                                  height: 12,
+                                ),
+                                Text(
+                                  data.label!,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1!
+                                      .copyWith(
+                                          color: currentIndex == data.index
+                                              ? primaryColor
+                                              : secondaryColor),
+                                )
+                              ],
+                            ),
+                          ),
+                        );
+                },
+              ),
+            ],
+          ),
+        ));
+  }
+
+  Widget buildTextField(
+    String labelText,
+    String placeholder,
+    bool isPasswordTextField,
+    readonly,
+    controller,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 15.0),
+      child: TextField(
+        controller: controller,
+        readOnly: isUpdate ? readonly : true,
+        obscureText: isPasswordTextField ? showPassword : false,
+        decoration: InputDecoration(
+            suffixIcon: isPasswordTextField
+                ? IconButton(
+                    onPressed: () {
+                      setState(() {
+                        showPassword = !showPassword;
+                      });
+                    },
+                    icon: Icon(
+                      showPassword
+                          ? Icons.remove_red_eye
+                          : Icons.visibility_off,
+                      color: Colors.grey,
+                    ),
+                  )
+                : null,
+            contentPadding: EdgeInsets.only(bottom: 3),
+            labelText: labelText,
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+            hintText: placeholder,
+            hintStyle: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+        
+            )),
+      ),
+    );
+  }
+}
