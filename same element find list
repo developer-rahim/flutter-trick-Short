@@ -1,0 +1,13 @@
+   List< dynamic> users = [
+     'john','ffff','john','fff'
+//     { "name": 'John', 'age': 18 },
+//     { "name": 'Jane', 'age': 21 },
+//     { "name": 'Mary', 'age': 23 },
+//     { "name": 'Mary', 'age': 27 },
+  ];
+  List names = [];
+  users.forEach((u){
+    if (names.contains(u)) print("duplicate ${u}");
+    else names.add(u);
+  });
+  print(names);
