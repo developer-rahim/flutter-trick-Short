@@ -1,0 +1,107 @@
+image_picker: ^0.8.5+3
+
+ File? _image;
+
+  final _picker = ImagePicker();
+  Future<void> _openImagePicker() async {
+    final XFile? pickedImage =
+        await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedImage != null) {
+      setState(() {
+        _image = File(pickedImage.path);
+      });
+    }
+  }
+  
+  
+  return :
+  
+                  Center(
+                  child: Stack(
+                    children: [
+                      Container(
+                        width: 130,
+                        height: 130,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                              width: 4,
+                              color: Theme.of(context).scaffoldBackgroundColor),
+                          boxShadow: [
+                            BoxShadow(
+                                spreadRadius: 2,
+                                blurRadius: 10,
+                                color: Colors.black.withOpacity(0.1),
+                                offset: Offset(0, 10))
+                          ],
+                          shape: BoxShape.circle,
+
+                          // image: DecorationImage(
+                          //     fit: BoxFit.cover,
+                          //     image:
+                          //     //  NetworkImage(
+                          //     //   "https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png",
+                          //     // )
+                        ),
+                        child: _image != null
+                            ? Center(
+                                child: Container(
+                                    decoration:
+                                        BoxDecoration(shape: BoxShape.circle),
+                                    child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(50),
+                                        child: Image.file(
+                                          _image!,
+                                          fit: BoxFit.fill,
+                                          width: double.infinity,
+                                        ))))
+                            : Center(
+                                child: Container(
+                                decoration:
+                                    BoxDecoration(shape: BoxShape.circle),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(50),
+                                  child: Image.network(
+                                    "https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png",
+                                  ),
+                                ),
+                              )
+                                // const Text('Please select an image')
+
+                                ),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: isUpdate
+                            ? Container(
+                                height: 40,
+                                width: 40,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    width: 4,
+                                    color: Theme.of(context)
+                                        .scaffoldBackgroundColor,
+                                  ),
+                                  color: secondaryColor,
+                                ),
+                                child: isUpdate
+                                    ? GestureDetector(
+                                        onTap: () {
+                                          _openImagePicker;
+                                          print(_openImagePicker());
+                                        },
+                                        child: Center(
+                                          child: Icon(
+                                            Icons.edit,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      )
+                                    : Container(),
+                              )
+                            : Container(),
+                      )
+                    ],
+                  ),
+                ),
