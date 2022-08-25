@@ -1,0 +1,122 @@
+import 'package:api_callig3/data/signup.dart';
+import 'package:api_callig3/deteailsScreen.dart';
+import 'package:api_callig3/droipdownMenu.dart';
+import 'package:api_callig3/filterProdect.dart';
+
+import 'package:flutter/material.dart';
+import 'dart:html';
+import 'package:google_fonts/google_fonts.dart';
+
+void main() {
+  runApp(MaterialApp(
+    darkTheme: ThemeData.dark(),
+    debugShowCheckedModeBanner: false,
+    theme: ThemeData(fontFamily: 'rrr', primarySwatch: Colors.blue),
+    title: 'Easy Shopping',
+    home: Expotail(),
+    routes: {
+      '/sinup': (context) => SingUp(),
+      '/home': (context) => Bottomnav(),
+      '/login': (context) => LoginPage(),
+      '/filter': (context) => FilterPage()
+      // '\deteails': (context) => DeteailsScreen()
+    },
+  ));
+}
+
+class Expotail extends StatefulWidget {
+  const Expotail({Key? key}) : super(key: key);
+
+  @override
+  _ExpotailState createState() => _ExpotailState();
+}
+
+class _ExpotailState extends State<Expotail> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        child: ExpansionTile(
+          title: Text('Description'),
+          children: [
+            ListTile(
+              title: Wrap(children: [
+                Text(
+                    '''This Prodect is 100% pure demension. It suitable for You and your children.
+    we delivery our product in 24 hours. you can truted our product. We are not belive in busness. We belive in customer support.
+    if we gain the love of customer trusted. We can go as far as long. We can not any consider with the quality of product.'''),
+                Container(
+                  height: 81,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Dropdown(
+                          itenm: ['Red', 'Blue', 'White', 'Purple'],
+                          hinttext: 'Choose Color',
+                        ),
+                      ),
+                      Container(
+                        child: Expanded(
+                          child: Dropdown(
+                            itenm: ['2XL', 'XL', 'L', 'M', 'S'],
+                            hinttext: 'Choose Size',
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ]),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+
+
+class Dropdown extends StatefulWidget {
+  final List<String> itenm;
+  late String ratingcontrol;
+  final String hinttext;
+  Dropdown({required this.itenm, this.hinttext = '', this.ratingcontrol = ''});
+  @override
+  _DropdownState createState() => _DropdownState();
+}
+
+class _DropdownState extends State<Dropdown> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+          child: Column(children: [
+        DropdownButtonFormField(
+          decoration: InputDecoration(
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(36),
+                  borderSide: BorderSide.none)),
+          items: widget.itenm.map((e) {
+            return DropdownMenuItem(value: e, child: Text(e));
+          }).toList(),
+          onChanged: (_value) {
+            setState(() {
+              widget.ratingcontrol = _value.toString();
+            });
+          },
+          hint: Text(
+            widget.hinttext,
+            style: TextStyle(fontSize: 20, fontFamily: 'rrr'),
+          ),
+        ),
+        // Text(
+        //   widget.ratingcontrol,
+        //   style: TextStyle(fontSize: 25, fontFamily: 'rrr'),
+        // ),
+      ])),
+    );
+  }
+}

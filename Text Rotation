@@ -1,0 +1,53 @@
+   Positioned(
+
+                  top: 250,
+                  child: GestureDetector(
+                    onTap: () {
+                      if (is_logged_in == true) {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return MessengerList();
+                        }));
+                      } else {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return Login();
+                        }));
+                      }
+                    },
+                    child: RotatedBox(
+                      quarterTurns: -1,
+                      child: Container(
+                        height: 30,
+                        width: 120,
+                        decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.vertical(
+                                bottom: Radius.circular(10))),
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 18),
+                          child: RichText(
+                            text: TextSpan(
+                              text: 'Live Chat  ',
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white),
+                              children: [
+                                WidgetSpan(
+                                  child: RotatedBox(
+                                      quarterTurns: 2,
+                                      child: Icon(
+                                        Icons.message,
+                                        color: Colors.amber,
+                                        size: 20,
+                                      )),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),

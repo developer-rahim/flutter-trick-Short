@@ -1,0 +1,38 @@
+ 
+ flutter_html: 
+ expandable: 
+ 
+ ExpandableNotifier buildExpandableDescription() {
+    return ExpandableNotifier(
+        child: ScrollOnExpand(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Expandable(
+            collapsed: Container(
+                height: 50, child: Html(data: _productDetails.description)),
+            expanded: Container(child: Html(data: _productDetails.description)),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              Builder(
+                builder: (context) {
+                  var controller = ExpandableController.of(context);
+                  return FlatButton(
+                    child: Text(
+                      !controller.expanded ? AppLocalizations.of(context).common_view_more : AppLocalizations.of(context).common_show_less,
+                      style: TextStyle(color: MyTheme.font_grey, fontSize: 11),
+                    ),
+                    onPressed: () {
+                      controller.toggle();
+                    },
+                  );
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    ));
+  }
