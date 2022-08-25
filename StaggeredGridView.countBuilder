@@ -1,0 +1,40 @@
+ 
+                          StaggeredGridView.countBuilder(
+                              staggeredTileBuilder: (int index) =>
+                                  new StaggeredTile.count(
+                                      2, index.isEven ? 2 : 1),
+                              mainAxisSpacing: 1.0,
+                              crossAxisSpacing: 1.0,
+                              crossAxisCount: 4,
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: productProvider.data_list.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return 
+                                  Container(
+                                    child: Card(
+                                        child: Column(
+                                      children: [
+                                        Expanded(
+                                          child: Container(
+                                              child: Image.network(
+                                                  productProvider
+                                                      .data_list[index]['image']
+                                                      .toString())),
+                                        ),
+                                        Text(
+                                          productProvider.data_list[index]
+                                                  ['title']
+                                              .toString(),
+                                          maxLines: 1,
+                                          style: TextStyle(),
+                                        ),
+                                        Text(
+                                          'Price ${productProvider.data_list[index]['price'].toString()}',
+                                          style: TextStyle(),
+                                        )
+                                      ],
+                                    )),
+                                  ),
+                                );
+                              })

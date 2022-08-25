@@ -1,33 +1,35 @@
-getFileListData() async {
-     var data = await DBService().getFileList();
-     setState(() {
-       fileList = data;
-       print("updated");
-     });
-   }
-
-  updata() {
-
-     getFileListData();
-   }
 
 
- RefreshIndicator(
+  getFileListData() async {
+    var data = await DBService().getFileList();
+    setState(() {
+      fileList = data;
+      print("updated");
+    });
+  }
+ 
+ updata() {
+ 
+    getFileListData();
+  }
 
-         displacement: 250,
-         backgroundColor: secondaryColor,
-         color: Colors.white,
-         strokeWidth: 3,
-         triggerMode: RefreshIndicatorTriggerMode.onEdge,
-         onRefresh: () async {
-           await Future.delayed(Duration(milliseconds: 2000)).then(
-               (value) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                 backgroundColor: secondaryColor,
-                     content:  Text('Update Successfully'),
-                     duration: const Duration(seconds: 1),
 
-                   )));
-           updata();
+RefreshIndicator(
+      
+        displacement: 250,
+        backgroundColor: secondaryColor,
+        color: Colors.white,
+        strokeWidth: 3,
+        triggerMode: RefreshIndicatorTriggerMode.onEdge,
+        onRefresh: () async {
+          await Future.delayed(Duration(milliseconds: 2000)).then(
+              (value) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                backgroundColor: secondaryColor,
+                    content:  Text('Update Successfully'),
+                    duration: const Duration(seconds: 1),
+                   
+                  )));
+          updata();
 
-           print('HEllo');
-         },)
+          print('HEllo');
+        },)

@@ -1,0 +1,46 @@
+  import url lancer
+
+  Future<void> _dialCall() async {
+    final Uri launchUri = Uri(
+      scheme: 'tel',
+      path: '+8801922-228111',
+    );
+    await launch(launchUri.toString());
+  }
+
+
+widget er bitor call korte hobe
+
+  IconButton(
+                    icon: new Icon(Icons.phone),
+                    onPressed: () {
+                      _dialCall();
+                    },
+                  ),
+
+............ba......
+
+
+    ListTile(
+                      visualDensity:
+                          VisualDensity(horizontal: -4, vertical: -4),
+                      leading: Icon(Icons.call, color: Colors.blue)
+
+                      // Image.asset(
+                      //   "assets/wallet.png",
+                      //   height: 18,
+                      //   //  color: Color.fromRGBO(153, 153, 153, 1),
+                      //   color: Colors.brown,
+                      // )
+                      ,
+                      title: Text(
+                          // AppLocalizations.of(context).main_drawer_wallet,
+                          '+8801922-228111',
+                          style: TextStyle(
+                              color: Colors.black,
+                              //color: Color.fromRGBO(153, 153, 153, 1),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600)),
+                      onTap: () {
+                       _dialCall();
+                      }),
