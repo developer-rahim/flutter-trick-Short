@@ -1,0 +1,22 @@
+For cocoa pods install……first…
+Step 1 (install HomeBrew)
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)
+  Step 2 (Run these two commands in your terminal to add Homebrew to your PATH)
+echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> /Users/”YOUR USER FORLDER”/.zprofile
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+  Step 3 (now you can install cocoapods)
+brew install cocoapods
+
+
+Second way…….
+
+Open Terminal
+curl -L https://get.rvm.io | bash -s stable
+Reopen Terminal
+rvm install ruby-2.6
+
+rvm use ruby-2.6.5
+
+rvm --default use 2.6.5
+Then this installed cocoapods as expected
+sudo gem install cocoapods

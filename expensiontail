@@ -1,3 +1,7 @@
+ 
+ flutter_html: 
+ expandable: 
+ 
  ExpandableNotifier buildExpandableDescription() {
     return ExpandableNotifier(
         child: ScrollOnExpand(

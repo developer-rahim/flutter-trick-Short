@@ -1,0 +1,51 @@
+ var popuplist = [];
+  Future getdata() async {
+    String url = 'https://www.bongobaba.com/api/v2/popup';
+    http.Response response = await http.get(Uri.parse(url));
+    var data = jsonDecode(response.body)['data'];
+    // print(data);
+    setState(() {
+      popuplist = data;
+      id = popuplist[0]['type'];
+      value = popuplist[0]['value'];
+      WidgetsBinding.instance?.addPostFrameCallback((_) {
+        showDialog(
+          context: context,
+          builder: (contex) => AlertDialog(
+            content: Container(
+              height: 100,
+              child: Column(
+                children: [Container(
+                  height: 100,
+                  child:AppConfig.BASE_PATH + value==null?CircularProgressIndicator(): Image.network(AppConfig.BASE_PATH + value,fit: BoxFit.fill,
+                 ))],
+              ),
+            ),
+            actions: [
+              TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: id == null
+                      ? CircularProgressIndicator()
+                      : Text(id.toString()))
+            ],
+          ),
+        );
+      });
+    });
+    print('data   :$popuplist');
+    print('id : $id');
+    return data;
+  }
+
+  var value;
+  bool pop = false;
+  var id;
+
+  void initState() {
+    getdata();
+    // TODO: implement initState
+    //re appear statusbar in case it was not there in the previous page
+    SystemChrome.setEnabledSystemUIOverlays(
+        [SystemUiOverlay.top, SystemUiOverlay.bottom]);
+    super.initState();
+  }
