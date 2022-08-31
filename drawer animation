@@ -3,6 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:otp_provider/theme/theme.dart';
 import 'package:otp_provider/view/neumorphism_design/neumorphism_container.dart';
 ///////Call korte hobe ababe
+
+ AppDrawer(
+      child: 
+     Dashboard()),,,
+     
+     
+  ////////   Akon dashboard pager a ata call dite hobe
+
 Builder(
           builder: (BuildContext appBarContext) {
             return IconButton(
