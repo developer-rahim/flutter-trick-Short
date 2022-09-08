@@ -1,0 +1,41 @@
+
+
+
+scroll view somoy obossoy listview.builder akok babe thakte hobe......kono widget diye wrap kora jabe na
+
+
+
+
+
+
+class DashboardController extends ChangeNotifier {
+ 
+  ScrollController scrollController = ScrollController();
+  ScrollController scrollController2 = ScrollController();
+
+ 
+
+  scrollToMaxExtent() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      scrollController.animateTo(
+        scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 100),
+        curve: Curves.easeIn,
+      );
+    });
+    notifyListeners();
+  }
+// This is what you're looking for!
+
+  scrollDown() {
+    print('FFFFFFFFFF');
+    scrollController2.animateTo(
+      scrollController2.position.maxScrollExtent,
+      duration: Duration(microseconds: 300),
+      curve: Curves.easeOut,
+    );
+    notifyListeners();
+  }
+
+  
+ }
