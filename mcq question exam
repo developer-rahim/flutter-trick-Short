@@ -1,0 +1,144 @@
+class QuestionBankViewController extends GetxController {}
+
+
+...................................................................................................................
+
+ ListView.builder(
+              itemCount: 2,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemBuilder: ((context, index) {
+                return MCQQuestionCard(
+                  index: index,
+                );
+              }),
+            ),
+
+
+
+...................................................................................................................
+
+
+import 'package:admission_assistant/src/core/theme/colors.dart';
+import 'package:admission_assistant/src/core/theme/text_style.dart';
+import 'package:admission_assistant/src/feature/home/question_bank/controller/question_bank_view_controller.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+class MCQQuestionCard extends GetView<QuestionBankViewController> {
+  const MCQQuestionCard({
+    Key? key,
+    required this.index,
+  }) : super(key: key);
+
+  final int index;
+
+  //TODO: Update controller with selected answer per question
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '${index + 1}. আমাদের দেশের নাম কি?',
+          style: AppTextStyle.bold14.copyWith(
+            height: 21 / 14,
+            color: AppColors.lightBlack80,
+          ),
+        ),
+        const SizedBox(height: 10),
+        const _OptionsBuilder(),
+        const SizedBox(height: 25),
+      ],
+    );
+  }
+}
+
+class _OptionsBuilder extends StatefulWidget {
+  const _OptionsBuilder({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<_OptionsBuilder> createState() => _OptionsBuilderState();
+}
+
+class _OptionsBuilderState extends State<_OptionsBuilder> {
+  int _selectedOption = -1;
+
+  void updateSelectedOption(index) {
+    _selectedOption = index;
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: 4,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemBuilder: ((context, index) {
+        return _Option(
+          index: index,
+          onTap: updateSelectedOption,
+          isSelected: index == _selectedOption,
+        );
+      }),
+    );
+  }
+}
+
+class _Option extends StatefulWidget {
+  const _Option({
+    Key? key,
+    required this.index,
+    required this.onTap,
+    this.isSelected = false,
+  }) : super(key: key);
+
+  final int index;
+  final bool isSelected;
+  final Function(int) onTap;
+
+  @override
+  State<_Option> createState() => _OptionState();
+}
+
+class _OptionState extends State<_Option> {
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        widget.onTap(widget.index);
+      },
+      child: Container(
+        margin: EdgeInsets.only(bottom: widget.index < 3 ? 10 : 0),
+        decoration: _optionDecorator(),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 17,
+            vertical: 10,
+          ),
+          child: Text(
+            '${widget.index + 1}. বাংলাদেশ',
+            style: AppTextStyle.semibold14.copyWith(
+              fontWeight: FontWeight.w400,
+              height: 21 / 14,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  BoxDecoration _optionDecorator() {
+    return BoxDecoration(
+      color: AppColors.white,
+      borderRadius: BorderRadius.circular(7),
+      border: Border.all(
+        color: widget.isSelected ? AppColors.primary : Colors.white,
+      ),
+    );
+  }
+}
