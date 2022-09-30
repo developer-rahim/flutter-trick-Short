@@ -1,0 +1,18 @@
+import 'package:file_picker/file_picker.dart';
+import 'package:get/get.dart';
+import 'dart:io';
+
+class ProblemSolvingViewController extends GetxController {
+
+
+  RxString fileText = "".obs;
+  void pickFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    if (result != null && result.files.single.path != null) {
+      File file = File(result.files.single.path!);
+      
+      ................. if not use Getx use    setstate     for bellow line...............
+      fileText.value = file.path.split('/').last;
+    } else {}
+  }
+}
