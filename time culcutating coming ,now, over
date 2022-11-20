@@ -1,3 +1,6 @@
+enum TaskCondition { coming, now, over }
+
+
 class _LiveExamCard extends StatefulWidget {
   final TodaysExamModel exam;
 
