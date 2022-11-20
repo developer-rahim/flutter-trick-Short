@@ -1,0 +1,23 @@
+  String get totalAmount => data!
+      .map((item) {
+        double quantity = double.tryParse(item.quantity.toString()) ?? 1;
+        double totalPrice = double.tryParse(item.cartable?.price ?? '0') ?? 0;
+        return (quantity * totalPrice);
+      })
+      .reduce((value1, value2) => value1 + value2)
+      .toStringAsFixed(1);
+
+  String get cartTotal =>
+      (double.parse(totalAmount) - double.parse(totalDiscount))
+          .toStringAsFixed(1);
+
+  String get totalDiscount => data!
+      .map((item) {
+        double quantity = double.tryParse(item.quantity.toString()) ?? 1;
+        double totalDiscount = item.cartable?.hasDiscount == true
+            ? double.tryParse(item.cartable?.discount ?? '0') ?? 0
+            : 0;
+        return (quantity * totalDiscount);
+      })
+      .reduce((value1, value2) => value1 + value2)
+      .toString();
