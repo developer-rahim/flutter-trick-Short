@@ -1,0 +1,10 @@
+ Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 250),
+                    child: TextScroll(
+                      controller.dashbaordBannerData!.body.toString(),
+                      intervalSpaces: 10,
+                      velocity: const Velocity(pixelsPerSecond: Offset(50, 0)),
+                    ),
+                  ),
+                ),
