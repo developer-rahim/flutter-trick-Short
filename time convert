@@ -30,3 +30,27 @@ String? getFormattedDateTime(DateTime? dateTime) {
   }
   return time;
 }
+
+
+...........................................
+
+
+Time convertting in model  As compair  in Available At
+
+....................................................
+
+
+
+
+ bool get contentAvaiableAt =>
+      (availableAt == null || (DateTime.now().isBefore(availableAt!)));
+  String get contentStatus {
+    String status;
+    if (contentAvaiableAt) {
+      status = getFormattedDateTime(availableAt)!;
+    } else {
+      status = '';
+    }
+    return status;
+  }
+
