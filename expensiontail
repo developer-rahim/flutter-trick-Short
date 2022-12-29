@@ -36,3 +36,84 @@
       ),
     ));
   }
+  
+  
+  
+  
+  
+  
+  ...........................................................
+  
+  
+  
+  
+  import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:tutor_academia/src/core/theme/colors.dart';
+import 'package:tutor_academia/src/core/theme/text_style.dart';
+import 'package:tutor_academia/src/feature/courses/root/model/course_model.dart';
+import 'package:tutor_academia/src/utils/assets.dart';
+
+class CourseFaqsCard extends StatefulWidget {
+  CourseFaqsCard({
+    Key? key,
+    this.faqs,
+  }) : super(key: key);
+
+  Faq? faqs;
+  @override
+  State<CourseFaqsCard> createState() => _CourseFaqsCardState();
+}
+
+class _CourseFaqsCardState extends State<CourseFaqsCard> {
+  bool isExpanded = false;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        border: Border.all(color: AppColors.lightBlack20),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          onExpansionChanged: (bool value) {
+            setState(() {
+              isExpanded = !isExpanded;
+            });
+          },
+          title: Text(
+            widget.faqs!.question ?? '',
+            style: AppTextStyle.semibold14.copyWith(color: AppColors.black),
+          ),
+          trailing: isExpanded
+              ? Image.asset(Assets.upArrowCircular)
+              : Image.asset(Assets.downArrowCircular),
+          children: <Widget>[
+            Container(
+              margin: const EdgeInsets.only(
+                left: 10,
+                right: 10,
+                bottom: 10,
+              ),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: const Color.fromRGBO(59, 59, 59, 0.04),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(0.0),
+                child: Html(
+                  data: widget.faqs!.answer ?? '',
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
