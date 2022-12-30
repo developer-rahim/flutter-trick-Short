@@ -1,0 +1,31 @@
+import 'package:package_info_plus/package_info_plus.dart';
+
+@override
+  void initState() {
+    super.initState();
+    _initPackageInfo();
+  }
+PackageInfo _packageInfo = PackageInfo(
+    appName: 'Unknown',
+    packageName: 'Unknown',
+    version: 'Unknown',
+    buildNumber: 'Unknown',
+  );
+  Future<void> _initPackageInfo() async {
+    final info = await PackageInfo.fromPlatform();
+    setState(() {
+      _packageInfo = info;
+    });
+  }
+
+
+
+
+
+ Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(_packageInfo.version),
+              Text('(${_packageInfo.buildNumber})'),
+            ],
+          ),
