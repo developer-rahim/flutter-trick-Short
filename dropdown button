@@ -1,0 +1,192 @@
+ 
+ string ?sscDivisionValue;
+ Container(
+                    height: 34,
+                    decoration: const BoxDecoration(
+                      color: AppColors.white,
+                    ),
+                    width: double.infinity,
+                    child: CommonDropdown(
+                      hint: TextConstants.division,
+                   dropdownDecoration: BoxDecoration(),
+                      dropdownItems: const [
+                        TextConstants.science,
+                        TextConstants.business,
+                        TextConstants.human,
+                      ],
+                      value: sscDivisionValue,
+                      onChanged: ((val) {
+                        setState(() {
+                          sscDivisionValue = val;
+                        });
+                      }),
+                    ),
+                  ),
+                  
+                  
+                  
+                  
+                  import 'package:admission_assistant/src/core/theme/colors.dart';
+import 'package:admission_assistant/src/core/theme/text_style.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter/material.dart';
+
+class CommonDropdown extends StatelessWidget {
+  const CommonDropdown({
+    required this.hint,
+    required this.value,
+    required this.dropdownItems,
+    required this.onChanged,
+    this.selectedItemBuilder,
+    this.hintAlignment,
+    this.valueAlignment,
+    this.buttonHeight,
+    this.buttonWidth,
+    this.buttonPadding,
+    this.buttonDecoration,
+    this.buttonElevation,
+    this.icon,
+    this.iconSize,
+    this.iconEnabledColor,
+    this.iconDisabledColor,
+    this.itemHeight,
+    this.itemPadding,
+    this.dropdownHeight,
+    this.dropdownWidth,
+    this.dropdownPadding,
+    this.dropdownDecoration,
+    this.dropdownElevation,
+    this.scrollbarRadius,
+    this.scrollbarThickness,
+    this.scrollbarAlwaysShow,
+    this.offset,
+    Key? key,
+    this.buttonRadius,
+    this.buttonBorderColor,
+    this.buttonColor,
+    this.buttonBorderWidth,
+    this.buttonHintStyle,
+    this.buttonTextStyle,
+  }) : super(key: key);
+
+  final String hint;
+  final String? value;
+  final List<String> dropdownItems;
+  final ValueChanged<String?>? onChanged;
+  final DropdownButtonBuilder? selectedItemBuilder;
+  final Alignment? hintAlignment;
+  final Alignment? valueAlignment;
+  final double? buttonHeight, buttonWidth;
+  final EdgeInsetsGeometry? buttonPadding;
+  final BoxDecoration? buttonDecoration;
+  final int? buttonElevation;
+  final Widget? icon;
+  final double? iconSize;
+  final Color? iconEnabledColor;
+  final Color? iconDisabledColor;
+  final double? itemHeight;
+  final EdgeInsetsGeometry? itemPadding;
+  final double? dropdownHeight, dropdownWidth;
+  final EdgeInsetsGeometry? dropdownPadding;
+  final BoxDecoration? dropdownDecoration;
+  final int? dropdownElevation;
+  final Radius? scrollbarRadius;
+  final double? scrollbarThickness;
+  final bool? scrollbarAlwaysShow;
+  final Offset? offset;
+  final double? buttonRadius;
+  final Color? buttonBorderColor;
+  final Color? buttonColor;
+  final double? buttonBorderWidth;
+  final TextStyle? buttonHintStyle;
+  final TextStyle? buttonTextStyle;
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButtonHideUnderline(
+      child: DropdownButton2(
+        isExpanded: true,
+        style: buttonTextStyle,
+        hint: Container(
+          alignment: hintAlignment,
+          child: Text(
+            hint,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+            style: buttonHintStyle ??
+                AppTextStyle.medium12.copyWith(
+                  color: AppColors.lightBlack40,
+                ),
+          ),
+        ),
+        value: value,
+        items: dropdownItems
+            .map((item) => DropdownMenuItem<String>(
+                  value: item,
+                  child: Container(
+                    alignment: valueAlignment,
+                    child: Text(
+                      item,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: AppTextStyle.medium12.copyWith(
+                        color: AppColors.lightBlack90,
+                      ),
+                    ),
+                  ),
+                ))
+            .toList(),
+        onChanged: onChanged,
+        selectedItemBuilder: selectedItemBuilder,
+        icon: icon ?? const Icon(Icons.keyboard_arrow_down_rounded),
+        iconSize: iconSize ?? 14,
+        iconEnabledColor: iconEnabledColor ?? AppColors.primary,
+        iconDisabledColor: iconDisabledColor,
+        buttonHeight: buttonHeight ?? 40,
+        buttonWidth: buttonWidth ?? 140,
+        buttonPadding: buttonPadding ??
+            const EdgeInsets.only(
+              left: 15,
+              right: 15,
+            ),
+        buttonDecoration: buttonDecoration ??
+            BoxDecoration(
+              color: buttonColor,
+              borderRadius: BorderRadius.circular(buttonRadius ?? 4),
+              border: Border.all(
+                color: buttonBorderColor ?? Colors.black45,
+                width: buttonBorderWidth ?? 1,
+              ),
+            ),
+        buttonElevation: buttonElevation,
+        itemHeight: itemHeight ?? 40,
+        itemPadding: itemPadding ??
+            const EdgeInsets.only(
+              left: 14,
+              right: 14,
+            ),
+        dropdownMaxHeight: dropdownHeight ?? 200,
+        dropdownWidth: dropdownWidth ?? 140,
+        dropdownPadding: dropdownPadding,
+        
+        dropdownDecoration: dropdownDecoration ??
+            BoxDecoration(
+              borderRadius: BorderRadius.circular(6),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primary15,
+                  blurRadius: 12,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+            ),
+        dropdownElevation: dropdownElevation ?? 8,
+        scrollbarRadius: scrollbarRadius ?? const Radius.circular(40),
+        scrollbarThickness: scrollbarThickness,
+        scrollbarAlwaysShow: scrollbarAlwaysShow,
+        offset: offset,
+        dropdownOverButton: false,
+      ),
+    );
+  }
+}
