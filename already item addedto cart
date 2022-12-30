@@ -1,0 +1,22 @@
+ RxBool isAlreadyAdded = false.obs;
+  alreadyAdded(id) {
+    if (cartViewController.cartDatalist
+        .any((element) => element.itemId == id)) {
+      isAlreadyAdded.value = true;
+    } else {
+      isAlreadyAdded.value = false;
+    }
+  }
+  
+  
+  
+  
+  Future<void> _onTap() async {
+    if (controller.isAlreadyAdded.value == false) {
+      controller.isAlreadyAdded.value = true;
+      await Get.find<AddToCartViewController>()
+          .addToCart(controller.bookDetails?.id);
+    } else {
+      Get.toNamed(Routes.cart);
+    }
+  }

@@ -1,0 +1,27 @@
+
+  bool isFormFillUpDateExpired = false;
+
+  String get remainingDayForFormFillUp {
+    int? days = formFillupEndDate?.difference(formFillupStartDate!).inDays;
+    if (days == null || days <= 0) {
+      isFormFillUpDateExpired = true;
+      return 'আবেদনের সময়সীমা শেষ';
+    }
+    return "$days দিন বাকি";
+  }
+
+  bool get isAdmitCardExpired {
+    int? days = admitCardDeadline?.difference(admitCardAvailableDate!).inDays;
+    if (days == null || days <= 0) {
+      return true;
+    }
+    return false;
+  }
+
+  bool get isSeatPlanExpired {
+    int? days = DateTime.now().difference(examStartDate!).inDays;
+    if (days <= 0) {
+      return true;
+    }
+    return false;
+  }
