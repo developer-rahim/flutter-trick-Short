@@ -1,0 +1,9 @@
+ 
+ text_scroll: ^0.1.1
+ Expanded(
+                  child: TextScroll(
+                    controller.dashbaordBannerData!.body.toString(),
+                    intervalSpaces: 10,
+                    velocity: const Velocity(pixelsPerSecond: Offset(50, 0)),
+                  ),
+                ),

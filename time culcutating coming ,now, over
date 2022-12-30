@@ -1,0 +1,157 @@
+enum TaskCondition { coming, now, over }
+
+
+class _LiveExamCard extends StatefulWidget {
+  final TodaysExamModel exam;
+
+  const _LiveExamCard({
+    Key? key,
+    required this.exam,
+  }) : super(key: key);
+
+  @override
+  State<_LiveExamCard> createState() => _LiveExamCardState();
+}
+
+class _LiveExamCardState extends State<_LiveExamCard> {
+  late TaskCondition taskCondition;
+  DateTime? startTime;
+  DateTime? endTime;
+  DateTime? currentTime;
+
+  @override
+  void initState() {
+    super.initState();
+    calculateTime();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+        shape: BoxShape.rectangle,
+        border: Border.all(
+          color: AppColors.primary,
+          width: 0.5,
+        ),
+      ),
+      padding: const EdgeInsets.all(10),
+      margin: const EdgeInsets.only(bottom: 10),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  widget.exam.title ?? '',
+                  style: AppTextStyle.bold16.copyWith(
+                    height: 24 / 16,
+                    color: AppColors.lightBlack90,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 5),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  widget.exam.courseTitle ?? '',
+                  style: AppTextStyle.bold12.copyWith(
+                    height: 18 / 12,
+                    color: AppColors.primary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 5),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  taskCondition == TaskCondition.now
+                      ? TextConstants.now
+                      : TextConstants.today,
+                  style: AppTextStyle.bold12.copyWith(
+                    height: 18 / 12,
+                    color: AppColors.darkGreen,
+                  ),
+                ),
+              ),
+              _buildButton(todaysExam: widget.exam),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  _buildButton({required TodaysExamModel todaysExam}) {
+    switch (taskCondition) {
+      case TaskCondition.coming:
+        return Text(
+          getFormattedTime(startTime) ?? '',
+          style: AppTextStyle.bold12.copyWith(
+            height: 18 / 12,
+            color: AppColors.darkGreen,
+          ),
+        );
+
+      case TaskCondition.now:
+        return RoundedButton(
+          title: TextConstants.joinExam,
+          onPressed: () {
+            if (todaysExam.exam?.mode == ExamType.group.name) {
+              Get.snackbar(
+                'Coming Soon!',
+                'Not available in app. Check website for group exam.',
+                snackPosition: SnackPosition.BOTTOM,
+              );
+              return;
+            }
+
+            Get.toNamed(Routes.examInfo, arguments: todaysExam.exam!.id!);
+          },
+        );
+
+      case TaskCondition.over:
+        return const RoundedButton(
+          backgroundColor: AppColors.lightBlack80,
+          title: TextConstants.examFinished,
+        );
+
+      default:
+        return Text(
+          getFormattedTime(startTime) ?? '',
+          style: AppTextStyle.bold12.copyWith(
+            height: 18 / 12,
+            color: AppColors.darkGreen,
+          ),
+        );
+    }
+  }
+
+  calculateTime() {
+    startTime = widget.exam.exam?.startTime;
+    endTime = widget.exam.exam?.endTime;
+    currentTime = DateTime.now();
+
+    if (startTime != null && endTime != null) {
+      if (startTime!.isBefore(currentTime!) && endTime!.isAfter(currentTime!)) {
+        taskCondition = TaskCondition.now;
+      } else if (startTime!.isAfter(currentTime!) &&
+          endTime!.isAfter(currentTime!)) {
+        taskCondition = TaskCondition.coming;
+      } else {
+        taskCondition = TaskCondition.over;
+      }
+    }
+  }
+}

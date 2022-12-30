@@ -1,0 +1,20 @@
+ bool get hasDiscount {
+    bool discounted = false;
+    if (discountTill == null && discount != null) {
+      discounted = true;
+    }
+    if (discountTill != null && discountTill!.isAfter(DateTime.now())) {
+      discounted = true;
+    } else {
+      discounted = false;
+    }
+    return discounted;
+  }
+
+  String get bookPrice {
+    if (discountTill != null && discountTill!.isAfter(DateTime.now())) {
+      return discountedPrice!;
+    } else {
+      return price!;
+    }
+  }

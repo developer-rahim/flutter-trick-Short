@@ -1,0 +1,109 @@
+import 'package:flutter/material.dart';
+
+void main() => runApp(
+      const MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: MyWidget(),
+      ),
+    );
+
+class MyWidget extends StatefulWidget {
+  const MyWidget({super.key});
+
+  @override
+  State<MyWidget> createState() => _MyWidgetState();
+}
+
+List<UserInfo> userInfoList = [
+  UserInfo(
+    id: 1,
+    name: 'Abdul Rahim1',
+    age: 26,
+  ),
+  UserInfo(
+    id: 2,
+    name: 'Abdul Rahim2',
+    age: 27,
+  ),
+  UserInfo(
+    id: 3,
+    name: 'Abdul Rahim3',
+    age: 28,
+  ),
+  UserInfo(
+    id: 4,
+    name: 'Abdul Rahim4',
+    age: 29,
+  ),
+  UserInfo(
+    id: 5,
+    name: 'Abdul Rahim5',
+    age: 20,
+  ),
+];
+List<UserInfo> multiSelectList = [];
+
+class _MyWidgetState extends State<MyWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Multi Selection'),
+        centerTitle: true,
+      ),
+      body: SizedBox(
+        child: ListView.builder(
+          itemCount: userInfoList.length,
+          shrinkWrap: true,
+          itemBuilder: ((context, index) {
+            UserInfo userInfo = userInfoList[index];
+            return Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10,
+                vertical: 10,
+              ),
+              child: Card(
+                color: multiSelectList.any((element) => element == userInfo)
+                    ? Colors.amber[100]
+                    : Colors.white,
+                child: ListTile(
+                  onTap: () {
+                    print(multiSelectList.map((e) => e.name));
+                    multiSelect(userInfoList[index]);
+                  },
+                  title: Text(userInfo.name ?? ''),
+                  subtitle: Text(
+                    userInfo.age.toString(),
+                  ),
+                ),
+              ),
+            );
+          }),
+        ),
+      ),
+    );
+  }
+
+  multiSelect(UserInfo userInfo) {
+    if (multiSelectList.contains(userInfo)) {
+      setState(() {
+        multiSelectList.remove(userInfo);
+      });
+    } else {
+      setState(() {
+        multiSelectList.add(userInfo);
+      });
+    }
+  }
+}
+
+class UserInfo {
+  UserInfo({
+    this.id,
+    this.name,
+    this.age,
+  });
+  int? id;
+  String? name;
+  int? age;
+}
