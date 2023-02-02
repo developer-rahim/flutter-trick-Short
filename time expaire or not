@@ -25,3 +25,18 @@
     }
     return false;
   }
+
+
+................Available Or Not ...............
+
+ bool get liveContentAvaiableAt =>
+      (startTime == null || (DateTime.now().isBefore(startTime!)));
+  String get liveContentStatus {
+    String status;
+    if (liveContentAvaiableAt) {
+      status = getFormattedDateTime(startTime)!;
+    } else {
+      status = '';
+    }
+    return status;
+  }
