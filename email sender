@@ -1,0 +1,13 @@
+ 
+ onTap er vitor call korle e hobe..........
+ 
+ Future<void> emailSupport() async {
+    final Uri launchUri = Uri(
+      scheme: 'mailto',
+      path: 'pr.admissionassistant@gmail.com',
+    );
+    await urlLauncher(
+      launchUri.toString(),
+    );
+  }
+  
