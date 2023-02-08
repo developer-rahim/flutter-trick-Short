@@ -1,4 +1,7 @@
-   List< dynamic> users = [
+  
+  .........................First way ........................
+  
+  List< dynamic> users = [
      'john','ffff','john','fff'
 //     { "name": 'John', 'age': 18 },
 //     { "name": 'Jane', 'age': 21 },
@@ -11,3 +14,45 @@
     else names.add(u);
   });
   print(names);
+
+.........................Second way ........................
+
+ final myList = [1, 2, 2, 3, 4,3,3];
+final uniqList = <int>[];
+final duplicate=<int>[];
+
+  for (final item in myList) {
+  if (uniqList.contains(item)) {
+    duplicate.add(item);    
+  }else{
+    uniqList.add(item); 
+  }
+    
+}
+  print('Uniq List : $uniqList');
+  print('duplicate : $duplicate');
+  
+  
+  
+ ..................2 list same element ........................
+
+  
+  final firstList = [1, 2, 3, 4];
+  final secondList = [1,3,4,5];
+  final matchItem=[];
+//   for(final item1 in firstList){
+//     for(final item2 in secondList){
+//       if(item1==item2){
+//         matchItem.add(item1);
+//       }
+//     }
+   
+//   }
+//    print('Match Element$matchItem');
+ 
+  matchItem.addAll(firstList.where((element)=>secondList.where((element2)=>element==element2).isNotEmpty).toList());
+  
+  print('Match Element2 : $matchItem');
+}
+  
+  
