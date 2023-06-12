@@ -1,231 +1,114 @@
-import 'package:fashion_design/main.dart';
-
-import 'package:fashion_design/providers/tokenstoreprovider.dart';
-import 'package:fashion_design/screens/cart_screen.dart';
-import 'package:fashion_design/screens/login_signup.dart/login_and_signup.dart';
-import 'package:fashion_design/screens/pagination_page.dart';
-import 'package:fashion_design/screens/product_list.dart';
-import 'package:fashion_design/screens/product_page.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:ieducation/pages/bottom-navigation/controller/bottom_navigation_controller.dart';
+import 'package:ieducation/pages/course/controller/course_controller.dart';
+import 'package:ieducation/pages/drawer/drawer.dart';
+import 'package:ieducation/pages/home/controller/home_controller.dart';
+import 'package:ieducation/pages/home/view/home_page.dart';
+import 'package:ieducation/pages/products/view/product_page.dart';
 
-import 'package:badges/badges.dart';
-import 'package:provider/provider.dart';
+import '../../course/view/course-and-category/category_and_course.dart';
+import '../../navigation-profile/view/navigation_profile.dart';
 
-import '../Google_login/signin_screen.dart';
-import '../Google_login/userProfile_screen.dart';
-import '../providers/cart_provider.dart';
-
-class BottomNavBar extends StatefulWidget {
-  BottomNavBar(
-      {this.currentTab = 0,
-      this.currentScreen = const MyHomePage(),
-      this.fromdetailPage = false});
-  int currentTab = 0;
-  bool fromdetailPage = false;
-  Widget currentScreen ;
+class BottomNavigation extends StatefulWidget {
   @override
-  _BottomNavBarState createState() =>
-      _BottomNavBarState(currentTab, currentScreen);
+  _BottomNavigationState createState() => _BottomNavigationState();
 }
 
-class _BottomNavBarState extends State<BottomNavBar> {
-  // Properties & Variables needed
-
-  _BottomNavBarState(this.currentTab, this.currentScreen);
-  int currentTab; // to keep track of active tab index
-  TokenProvider? tokenProvider;
-  final List<Widget> screens = [
-     MyHomePage(),
-    paginationpage(),
-    CartScreen(),
-  UserInfoScreen(),
-   
-  ];
-  bool islogin = true;
+class _BottomNavigationState extends State<BottomNavigation> {
+  final bottomNavigationController = Get.put(BottomNavigationController());
+  final courseController = Get.put(CourseController());
+  final homeController = Get.put(HomeController());
   @override
   void initState() {
-    TokenProvider tokenProvider =
-        Provider.of<TokenProvider>(context, listen: false);
-    tokenProvider.gettoken();
-
-    // TODO: implement initState
+    homeController.getUserInfo();
     super.initState();
   }
 
-  // to store nested tabs
-  final PageStorageBucket bucket = PageStorageBucket();
-  Widget currentScreen; //= Home_Page(); // Our first view in viewport
-  int itemCount = 0;
+  int _currentIndex = 0;
+  final List<Widget> _children = <Widget>[
+    const HomePage(),
+    CategoryAndCoursePage(),
+    ProductPage(),
+    NavigationProfile(),
+    // BlogPage(),
+  ];
+  void _onItemTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    TokenProvider tokenProvider = Provider.of<TokenProvider>(context);
-    return Scaffold(
-      body: PageStorage(
-        child: currentScreen,
-        bucket: bucket,
-      ),
-      // floatingActionButton: FloatingActionButton(
-      //     backgroundColor: Color(0xFFE37D4E),
-      //     onPressed: () {
-      //       // Navigator.of(context)
-      //       //     .push(MaterialPageRoute(builder: (context) => OrderDetails()));
-      //     },
-      //     child: Padding(
-      //       padding: EdgeInsets.all(16.0),
-      //       child: Center(
-      //         child: Badge(
-      //           badgeContent: Text(
-      //             itemCount.toString(),
-      //             style: TextStyle(color: Colors.white),
-      //           ),
-      //           child: Icon(Icons.shopping_bag_outlined),
-      //         ),
-      //       ),
-      //     )),
-      //floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomAppBar(
-        // shape: CircularNotchedRectangle(),
-        // notchMargin: 6,
-        child: Container(
-            color: Colors.grey[300],
-            height: 60,
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  MaterialButton(
-                    minWidth: 40,
-                    onPressed: () {
-                      setState(() {
-                        currentScreen =
-                            MyHomePage(); // if user taps on this dashboard tab will be active
-                        currentTab = 0;
-                      });
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Icon(
-                          Icons.home,
-                          color: currentTab == 0
-                              ? Color.fromRGBO(102, 117, 102, 1)
-                              : Colors.grey,
-                        ),
-                        Text(
-                          'Home',
-                          style: TextStyle(
-                            color: currentTab == 0
-                                ? Color.fromRGBO(102, 117, 102, 1)
-                                : Colors.grey,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  MaterialButton(
-                    minWidth: 40,
-                    onPressed: () {
-                      setState(() {
-                        currentScreen =
-                            paginationpage(); // if user taps on this dashboard tab will be active
-                        currentTab = 1;
-                      });
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Icon(
-                          Icons.favorite_border_outlined,
-                          color: currentTab == 1
-                              ? Color.fromRGBO(102, 117, 102, 1)
-                              : Colors.grey,
-                        ),
-                        Text(
-                          'Pagination',
-                          style: TextStyle(
-                            color: currentTab == 1
-                                ? Color.fromRGBO(102, 117, 102, 1)
-                                : Colors.grey,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Right Tab bar icons
-
-                  MaterialButton(
-                    minWidth: 40,
-                    onPressed: () {
-                      setState(() {
-                        currentScreen =
-                            CartScreen(); // if user taps on this dashboard tab will be active
-                        currentTab = 2;
-                      });
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Badge(
-                          badgeContent: Consumer<CartProvider>(
-                            builder: (context, value, child) {
-                              return Text(
-                                value.counter.toString(),
-                                style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
-                              );
-                            },
-                          ),
-                          //  position: const BadgePosition(start: 30, bottom: 30),
-                          child: Icon(
-                            Icons.shopping_cart,
-                            color: currentTab == 2
-                                ? Color.fromRGBO(102, 117, 102, 1)
-                                : Colors.grey,
-                          ),
-                        ),
-                        Text(
-                          'Cart',
-                          style: TextStyle(
-                            color: currentTab == 2
-                                ? Color.fromRGBO(102, 117, 102, 1)
-                                : Colors.grey,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  MaterialButton(
-                    minWidth: 40,
-                    onPressed: () {
-                      setState(() {
-                    
-                        (currentScreen = UserInfoScreen());
-                           // if user taps on this dashboard tab will be active
-                        currentTab = 3;
-                      });
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Icon(
-                          Icons.account_circle,
-                          color: currentTab == 3
-                              ? Color.fromRGBO(102, 117, 102, 1)
-                              : Colors.grey,
-                        ),
-                        Text(
-                          'Profile',
-                          style: TextStyle(
-                            color: currentTab == 3
-                                ? Color.fromRGBO(102, 117, 102, 1)
-                                : Colors.grey,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ])),
+    return WillPopScope(
+      onWillPop: () async {
+        if (_currentIndex == 0) {
+          return true;
+        } else {
+          setState(() {
+            _currentIndex = 0;
+          });
+          return false;
+        }
+      },
+      child: Scaffold(
+        body: _children[_currentIndex],
+        // body: IndexedStack(
+        //   index: _currentIndex,
+        //   children: _children,
+        // ),
+        bottomNavigationBar: BottomNavigationBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.home,
+              ),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.school_outlined,
+              ),
+              label: 'Courses',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.menu_book,
+              ),
+              label: 'Books',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.person_outline,
+              ),
+              label: 'Classroom',
+            ),
+            // BottomNavigationBarItem(
+            //   icon: _currentIndex == 4
+            //       ? const Icon(
+            //           Icons.newspaper,
+            //           color: Colors.red,
+            //         )
+            //       : const Icon(
+            //           Icons.newspaper,
+            //           color: Colors.black26,
+            //         ),
+            //   label: 'Blog',
+            // ),
+          ],
+          currentIndex: _currentIndex,
+          selectedItemColor: Colors.red,
+          showUnselectedLabels: true,
+          unselectedItemColor: Colors.black26,
+          unselectedLabelStyle: const TextStyle(
+            color: Colors.black26,
+          ),
+          onTap: (index) {
+            _onItemTapped(index);
+          },
+        ),
+        drawer: GetDrawer(),
       ),
     );
   }
