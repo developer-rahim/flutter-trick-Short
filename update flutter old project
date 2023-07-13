@@ -1,0 +1,5 @@
+........Update flutter old project into new version.....
+
+1. dart pub upgrade --major-versions
+2. dart fix --apply
+3.flutter pub get
