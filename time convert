@@ -53,4 +53,11 @@ Time convertting in model  As compair  in Available At
     }
     return status;
   }
+.............................................
 
+
+  String? get date =>
+      createdAt != null ? DateFormat.yMMMMd().format(createdAt!) : null;
+
+  String? get time =>
+      createdAt != null ? DateFormat.jm().format(createdAt!) : null;
