@@ -1,3 +1,4 @@
+go to android/gradle//gradlew
 3. Right click on 'gradlew' and go to 'Open in Terminal' This file is found under {{YOUR PROJECT}}/android/gradlew
 
 enter image description here
