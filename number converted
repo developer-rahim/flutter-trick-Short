@@ -1,0 +1,53 @@
+extension NumberConverter on num {
+  static const List<String> _banglaNumbers = [
+    '০',
+    '১',
+    '২',
+    '৩',
+    '৪',
+    '৫',
+    '৬',
+    '৭',
+    '৮',
+    '৯'
+  ];
+
+  String toBangla() {
+    final String englishNumber = toString();
+    String banglaNumber = '';
+    for (int i = 0; i < englishNumber.length; i++) {
+      final int? digit = int.tryParse(englishNumber[i]);
+      if (digit != null && digit >= 0 && digit <= 9) {
+        banglaNumber += _banglaNumbers[digit];
+      } else {
+        banglaNumber += englishNumber[i];
+      }
+    }
+    return banglaNumber;
+  }
+
+  // convert 1, 2, 3, 4 to ক, খ, গ, ঘ
+  String get toBanglaOption {
+    switch (this) {
+      case 1:
+        return 'ক';
+      case 2:
+        return 'খ';
+      case 3:
+        return 'গ';
+      case 4:
+        return 'ঘ';
+      default:
+        return '';
+    }
+  }
+}
+
+extension StringExtension on String {
+  String get toQuestionNumberInBangla {
+    return replaceAll('a', 'ক.')
+        .replaceAll('b', 'খ.')
+        .replaceAll('c', 'গ.')
+        .replaceAll('d', 'ঘ.');
+  }
+}
