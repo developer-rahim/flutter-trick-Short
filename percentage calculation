@@ -1,0 +1,15 @@
+void main() {
+  
+  // 200 marks theke 25 paile koto percent.
+int totalMark=200;
+  int getNumber=25;
+  var result=(getNumber*100)/totalMark;
+  print (result);// 200 marks theke 25 paile koto percent.
+  
+  // 200 marks theke 25% pele koto hoy.
+   double total = 200; // Total amount
+  double percentage = 25; // Percentage you want to calculate
+  double results = (percentage / 100) * total; // Calculating the percentage value
+  
+  print("20% of 200 is: $results"); // Output: 20% of 1000 is: 200.0
+}
