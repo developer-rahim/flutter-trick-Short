@@ -1,0 +1,324 @@
+import 'package:bcscreatrixhaunt/src/core/theme/colors.dart';
+import 'package:bcscreatrixhaunt/src/core/theme/text_style.dart';
+import 'package:bcscreatrixhaunt/src/feature/exam/controller/exam_analysis_view_controller.dart';
+import 'package:bcscreatrixhaunt/src/utils/text_constants.dart';
+import 'package:bcscreatrixhaunt/src/widgets/pill_title.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+class MarkSheetPage extends GetView<ExamAnalysisViewController> {
+  const MarkSheetPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final String examTitle = Get.arguments;
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(TextConstants.markSheet),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: _ExamTimingTable(
+          exam: controller,
+          tableName: examTitle,
+        ),
+      ),
+    );
+  }
+}
+
+class _ExamTimingTable extends StatefulWidget {
+  const _ExamTimingTable({
+    required this.exam,
+    required this.tableName,
+  });
+
+  final ExamAnalysisViewController exam;
+  final String tableName;
+
+  @override
+  State<_ExamTimingTable> createState() => _ExamTimingTableState();
+}
+
+class _ExamTimingTableState extends State<_ExamTimingTable> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 30),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          PillTitle(title: widget.tableName),
+          const SizedBox(height: 15),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              FixedColumnWidget(),
+              ScrollableColumnWidget(),
+            ],
+          ),
+          const SizedBox(height: 20),
+          const PillTitle(title: TextConstants.summary),
+          const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SummaryFixedColumnWidget(),
+              SummaryScrollableColumnWidget()
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+Widget _buildHeaderText(String title) {
+  return Center(
+    child: Text(
+      title,
+      textAlign: TextAlign.center,
+      style: AppTextStyle.semibold12,
+    ),
+  );
+}
+
+Widget _buildDataText(String title) {
+  return Text(
+    title,
+    textAlign: TextAlign.center,
+    style: AppTextStyle.bold12,
+  );
+}
+
+class ScrollableColumnWidget extends GetView<ExamAnalysisViewController> {
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: DataTable(
+          headingRowColor: MaterialStateProperty.all(Colors.green[100]),
+          columnSpacing: 40,
+          border: TableBorder.all(
+            color: AppColors.primary,
+            style: BorderStyle.solid,
+            width: 1,
+            borderRadius: const BorderRadius.only(
+              topRight: Radius.circular(10),
+              bottomRight: Radius.circular(10),
+            ),
+          ),
+          columns: [
+            DataColumn(
+              label: _buildDataText((TextConstants.fullMark)),
+            ),
+            DataColumn(
+              label: _buildDataText((TextConstants.wrong)),
+            ),
+            DataColumn(
+              label: _buildDataText((TextConstants.correctAnswers)),
+            ),
+            DataColumn(
+              label: _buildDataText((TextConstants.yourResult)),
+            ),
+            DataColumn(
+              label: _buildDataText((TextConstants.percentage)),
+            ),
+            DataColumn(
+              label: _buildDataText((TextConstants.result)),
+            ),
+          ],
+          rows: controller.marksheet!.map(
+            (e) {
+              String totalMark =
+                  double.parse(e.totalMark ?? '0').toInt().toString();
+              return DataRow(
+                cells: [
+                  DataCell(Center(child: Text(totalMark))),
+                  DataCell(Center(child: Text(e.wrongAnswered ?? ''))),
+                  DataCell(Center(child: Text(e.correctedAnswer ?? ''))),
+                  DataCell(Center(child: Text(e.obtainedMark ?? ''))),
+                  DataCell(Center(child: Text("${e.percentage ?? ''} %"))),
+                  DataCell(
+                    Center(
+                      child: Text(
+                        e.result ?? '',
+                        style: TextStyle(
+                          color: e.result == 'Failed'
+                              ? AppColors.red
+                              : AppColors.green,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ).toList(),
+        ),
+      ),
+    );
+  }
+}
+
+class FixedColumnWidget extends GetView<ExamAnalysisViewController> {
+  @override
+  Widget build(BuildContext context) {
+    return DataTable(
+      columnSpacing: 10,
+      headingRowColor: MaterialStateProperty.all(Colors.green[300]),
+      border: TableBorder.all(
+        color: AppColors.primary,
+        style: BorderStyle.solid,
+        width: 1,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(10),
+          bottomLeft: Radius.circular(10),
+        ),
+      ),
+      columns: const [
+        DataColumn(label: Text(TextConstants.subject)),
+      ],
+      rows: [
+        ...controller.marksheet!.map((team) => DataRow(
+              cells: [
+                DataCell(Text(
+                  '${team.name}',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                )),
+              ],
+            ))
+      ],
+    );
+  }
+}
+
+class SummaryFixedColumnWidget extends GetView<ExamAnalysisViewController> {
+  const SummaryFixedColumnWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return DataTable(
+        columnSpacing: 10,
+        headingRowColor: MaterialStateProperty.all(Colors.green[300]),
+        border: TableBorder.all(
+          color: AppColors.primary,
+          style: BorderStyle.solid,
+          width: 1,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(10),
+            bottomLeft: Radius.circular(10),
+          ),
+        ),
+        columns: const [
+          DataColumn(label: Text(TextConstants.summary)),
+        ],
+        rows: const [
+          DataRow(
+            cells: [
+              DataCell(Text(
+                'Total',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              )),
+            ],
+          )
+        ]);
+  }
+}
+
+class SummaryScrollableColumnWidget
+    extends GetView<ExamAnalysisViewController> {
+  SummaryScrollableColumnWidget({super.key});
+  double totalMark = 0.0;
+  double totalObtained = 0.0;
+  double totalPercentage = 0.0;
+  double totalWrongAnswer = 0.0;
+  double totalCorrectAnswer = 0.0;
+  String result = '';
+
+  void summary() {
+    for (var i = 0; i < controller.marksheet!.length; i++) {
+      totalMark += double.parse(
+          double.parse(controller.marksheet![i].totalMark!).toString());
+      totalObtained += double.parse(
+          double.parse(controller.marksheet![i].obtainedMark!).toString());
+      totalWrongAnswer += double.parse(
+          double.parse(controller.marksheet![i].wrongAnswered!).toString());
+      totalCorrectAnswer += double.parse(
+          double.parse(controller.marksheet![i].correctedAnswer!).toString());
+    }
+    totalPercentage += (double.parse(totalObtained.toString()) * 100) /
+        double.parse(totalMark.toString()).toInt();
+    result = controller.exam!.finalResult;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    summary();
+    return Expanded(
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: DataTable(
+          headingRowColor: MaterialStateProperty.all(Colors.green[100]),
+          columnSpacing: 40,
+          border: TableBorder.all(
+            color: AppColors.primary,
+            style: BorderStyle.solid,
+            width: 1,
+            borderRadius: const BorderRadius.only(
+              topRight: Radius.circular(10),
+              bottomRight: Radius.circular(10),
+            ),
+          ),
+          columns: [
+            DataColumn(
+              label: _buildDataText((TextConstants.fullMark)),
+            ),
+            DataColumn(
+              label: _buildDataText((TextConstants.wrong)),
+            ),
+            DataColumn(
+              label: _buildDataText((TextConstants.correctAnswers)),
+            ),
+            DataColumn(
+              label: _buildDataText((TextConstants.yourResult)),
+            ),
+            DataColumn(
+              label: _buildDataText((TextConstants.percentage)),
+            ),
+            DataColumn(
+              label: _buildDataText((TextConstants.result)),
+            ),
+          ],
+          rows: [
+            DataRow(
+              cells: [
+                DataCell(Center(child: Text(totalMark.toInt().toString()))),
+                DataCell(
+                    Center(child: Text(totalWrongAnswer.toInt().toString()))),
+                DataCell(
+                    Center(child: Text(totalCorrectAnswer.toInt().toString()))),
+                DataCell(Center(child: Text(totalObtained.toInt().toString()))),
+                DataCell(Center(
+                    child: Text("${totalPercentage.toInt().toString()} %"))),
+                DataCell(
+                  Center(
+                    child: Text(
+                      result,
+                      style: TextStyle(
+                        color: result == 'Failed'
+                            ? AppColors.red
+                            : AppColors.green,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
