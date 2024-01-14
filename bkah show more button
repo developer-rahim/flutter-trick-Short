@@ -1,0 +1,198 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:nextive_affiliators/src/core/theme/colors.dart';
+import 'package:nextive_affiliators/src/core/theme/text_style.dart';
+
+class AllVerdors extends StatefulWidget {
+  const AllVerdors({Key? key}) : super(key: key);
+
+  @override
+  State<AllVerdors> createState() => _AllVerdorsState();
+}
+
+class _AllVerdorsState extends State<AllVerdors> {
+  List<String> allVendors = [
+    'A',
+    'B',
+    'C',
+    'D',
+    'E',
+    'A',
+    'B',
+    'A',
+    'B',
+    'C',
+    'D',
+    'E',
+    'A',
+    'B',
+  ];
+  int present = 0;
+  int perPage = 6;
+  List<String> intialiInstructors = [];
+  bool isExpanded = false;
+  @override
+  void initState() {
+    initialInstructorsList();
+    // TODO: implement initState
+    super.initState();
+  }
+
+  void initialInstructorsList() {
+    allVendors.isNotEmpty && allVendors.length > 6
+        ? intialiInstructors
+            .addAll(allVendors.getRange(present, present + perPage))
+        : null;
+    present = present + perPage;
+    setState(() {});
+  }
+
+  void loadMoreInstructors() {
+    intialiInstructors.addAll(allVendors.getRange(present, allVendors.length));
+    isExpanded = true;
+    setState(() {});
+  }
+
+  void lessInstructors() {
+    present = 0;
+    perPage = 6;
+    intialiInstructors.clear();
+    intialiInstructors.addAll(allVendors.getRange(present, present + perPage));
+    present = present + perPage;
+    isExpanded = false;
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return allVendors.isNotEmpty
+        ? Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              children: [
+                Stack(
+                  children: [
+                    GridView.builder(
+                      itemCount: intialiInstructors.length == 6
+                          ? intialiInstructors.length
+                          : intialiInstructors.length == allVendors.length
+                              ? allVendors.length
+                              : allVendors.length,
+                      primary: false,
+                      shrinkWrap: true,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        mainAxisSpacing: 10.0,
+                        crossAxisSpacing: 10.0,
+                        childAspectRatio: 109 / 112,
+                      ),
+                      padding: EdgeInsets.only(
+                          bottom: intialiInstructors.length == 6 ? 0 : 50),
+                      itemBuilder: (context, index) {
+                        return InkWell(
+                          onTap: () {
+                            print('object');
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: AppColors.lighterBlue,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            alignment: Alignment.center,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                        width: 3, color: AppColors.primary5),
+                                    borderRadius: BorderRadius.circular(50),
+                                  ),
+                                  child: Container(
+                                    height: 47,
+                                    width: 48,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      color: AppColors.primary,
+                                    ),
+                                  ),
+                                ),
+                                // const SizedBox(width: 17),
+
+                                Text(
+                                  'Vendor Name',
+                                  style: AppTextStyle.bold16.copyWith(
+                                    color: isExpanded
+                                        ? AppColors.black
+                                        : isExpanded == false
+                                            ? index > 2
+                                                ? AppColors.white
+                                                : AppColors.black
+                                            : AppColors.black,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                //  const SizedBox(height: 5),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                        height: 100,
+                        decoration: !isExpanded
+                            ? BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Colors.white60.withOpacity(.1),
+                                    AppColors.white
+                                  ], // You can customize the colors here
+                                ),
+                              )
+                            : null,
+                      ),
+                    ),
+                    Positioned(
+                        top: intialiInstructors.length == 6 ? 170 : null,
+                        bottom: intialiInstructors.length > 6 ? 0 : 20,
+                        left: 80,
+                        right: 80,
+                        child: allVendors.length > 6
+                            ? ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.primary,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                ),
+                                child: Text(
+                                  intialiInstructors.length == 6
+                                      ? 'See More'
+                                      : 'See Less',
+                                  style: AppTextStyle.bold16
+                                      .copyWith(color: AppColors.white),
+                                ),
+                                onPressed: () {
+                                  intialiInstructors.length == 6
+                                      ? loadMoreInstructors()
+                                      : lessInstructors();
+                                },
+                              )
+                            : const Offstage())
+                  ],
+                ),
+              ],
+            ),
+          )
+        : const Offstage();
+  }
+}
