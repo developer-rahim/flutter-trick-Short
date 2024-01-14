@@ -1,0 +1,97 @@
+import 'package:flutter/material.dart';
+import 'package:nextive_affiliators/src/core/theme/text_style.dart';
+import 'package:nextive_affiliators/src/utils/assets.dart';
+import 'package:nextive_affiliators/src/utils/text_constants.dart';
+
+class BkashBalanceAnimation extends StatefulWidget {
+  const BkashBalanceAnimation({super.key});
+
+  @override
+  State<BkashBalanceAnimation> createState() => _BkashBalanceAnimationState();
+}
+
+class _BkashBalanceAnimationState extends State<BkashBalanceAnimation> {
+  bool _isAnimated = false;
+  bool _isBallanceShown = false;
+  bool _isBallance = true;
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 261,
+      height: 35,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              /// Button
+              InkWell(
+                onTap: changeState,
+                child: Container(
+                  width: 160,
+                  height: 35,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      AnimatedOpacity(
+                        opacity: _isBallanceShown ? 1 : 0,
+                        duration: const Duration(milliseconds: 500),
+                        child:
+                            const Text('৳ 5000/-', style: AppTextStyle.bold16),
+                      ),
+                      Positioned(
+                        left: 10,
+                        right: 0,
+                        child: AnimatedOpacity(
+                          opacity: _isBallance ? 1 : 0,
+                          duration: const Duration(milliseconds: 300),
+                          child: const Center(
+                            child: Text(
+                              TextConstants.incomeAmount,
+                              style: AppTextStyle.bold13,
+                            ),
+                          ),
+                        ),
+                      ),
+                      AnimatedPositioned(
+                        duration: const Duration(milliseconds: 1100),
+                        left: _isAnimated == false ? 5 : 135,
+                        curve: Curves.fastOutSlowIn,
+                        child: Image.asset(
+                          Assets.nextiveLogo,
+                          height: 20,
+                          width: 20,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  void changeState() async {
+    _isAnimated = true;
+    _isBallance = false;
+    setState(() {});
+    await Future.delayed(const Duration(milliseconds: 800),
+        () => setState(() => _isBallanceShown = true));
+    await Future.delayed(const Duration(seconds: 3),
+        () => setState(() => _isBallanceShown = false));
+    await Future.delayed(const Duration(milliseconds: 200),
+        () => setState(() => _isAnimated = false));
+    await Future.delayed(const Duration(milliseconds: 800),
+        () => setState(() => _isBallance = true));
+  }
+}
