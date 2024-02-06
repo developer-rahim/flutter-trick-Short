@@ -1,0 +1,128 @@
+import 'package:flutter/material.dart';
+import 'package:nextive_affiliators/src/core/theme/colors.dart';
+import 'package:nextive_affiliators/src/core/theme/text_style.dart';
+import 'package:nextive_affiliators/src/utils/text_constants.dart';
+
+class NotificationPage extends StatefulWidget {
+  @override
+  _NotificationPageState createState() => _NotificationPageState();
+}
+
+class _NotificationPageState extends State<NotificationPage>
+    with SingleTickerProviderStateMixin {
+  TabController? _tabController;
+
+  @override
+  void initState() {
+    _tabController = new TabController(length: 2, vsync: this);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _tabController!.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: AppColors.primary,
+        title: Text(
+          TextConstants.notification,
+          style: TextStyle(color: AppColors.white),
+        ),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(
+            Icons.arrow_back,
+            color: AppColors.white,
+          ),
+        ),
+        shape: OutlineInputBorder(
+          borderSide: BorderSide.none,
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(10),
+            bottomRight: Radius.circular(10),
+          ),
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                height: 57,
+                decoration: BoxDecoration(
+                  color: AppColors.lighterBlue,
+                  // borderRadius: BorderRadius.circular(12),
+                ),
+                child: TabBar(
+                  controller: _tabController,
+                  isScrollable: false,
+                  indicatorWeight: 0,
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  indicatorPadding: const EdgeInsets.symmetric(vertical: 0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 00,
+                    vertical: 0,
+                  ),
+                  labelColor: AppColors.white,
+                  unselectedLabelColor: AppColors.primary,
+                  labelPadding: const EdgeInsets.only(
+                    left: 5,
+                    right: 5,
+                  ),
+                  unselectedLabelStyle: AppTextStyle.medium16.copyWith(
+                    height: 21 / 16,
+                  ),
+                  indicator: BoxDecoration(
+                    color: AppColors.primary,
+                    borderRadius: BorderRadius.circular(0),
+                  ),
+                  labelStyle: AppTextStyle.bold16.copyWith(
+                    height: 21 / 16,
+                  ),
+                  tabs: [
+                    Tab(
+                      child: Text(
+                        TextConstants.offer,
+                        style: TextStyle(fontSize: 14),
+                      ),
+                    ),
+                    Tab(
+                      child: Text(
+                        TextConstants.general,
+                        style: TextStyle(fontSize: 14),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: TabBarView(
+                  children: [
+                    Container(
+                      child: Center(
+                        child: Text('people'),
+                      ),
+                    ),
+                    Text('Person')
+                  ],
+                  controller: _tabController,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
