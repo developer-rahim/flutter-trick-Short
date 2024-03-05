@@ -1,0 +1,83 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
+
+class CachedImageExample extends StatefulWidget {
+  const CachedImageExample({super.key});
+
+  @override
+  _CachedImageExampleState createState() => _CachedImageExampleState();
+}
+
+class _CachedImageExampleState extends State<CachedImageExample> {
+  String ?_cachedImagePath;
+  Dio ?_dio;
+
+  @override
+  void initState() {
+    super.initState();
+    _dio = Dio();
+    _checkIfImageExists();
+  }
+
+  Future<void> _checkIfImageExists() async {
+    // Define cache directory
+    Directory tempDir = await getTemporaryDirectory();
+    String tempPath = tempDir.path;
+    String imagePath = '$tempPath/image.jpg';
+
+    // Check if image file exists
+    if (await File(imagePath).exists()) {
+      setState(() {
+        _cachedImagePath = imagePath;
+      });
+    } else {
+      _downloadImage();
+    }
+  }
+
+  Future<void> _downloadImage() async {
+    String url = 'https://buffer.com/cdn-cgi/image/w=1000,fit=contain,q=90,f=auto/library/content/images/size/w1200/2023/09/instagram-image-size.jpg';
+    try {
+      // Define cache directory
+      Directory tempDir = await getTemporaryDirectory();
+      String tempPath = tempDir.path;
+
+      // Download image
+      Response<dynamic> response = await _dio!.download(
+        url,
+        '$tempPath/image2.jpg',
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          _cachedImagePath = '$tempPath/image.jpg';
+        });
+      }
+    } catch (e) {
+      print('Error downloading image: $e');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Cached Image Example'),
+      ),
+      body: Center(
+        child: _cachedImagePath != null
+            ? Image.file(File(_cachedImagePath!))
+            : const CircularProgressIndicator(),
+      ),
+    );
+  }
+}
+
+void main() {
+  runApp(const MaterialApp(
+    home: CachedImageExample(),
+  ));
+}
