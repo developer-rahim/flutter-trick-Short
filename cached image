@@ -2,82 +2,130 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nextive_basic_demo_app/src/core/widgets/app_constant.dart';
 import 'package:path_provider/path_provider.dart';
 
-class CachedImageExample extends StatefulWidget {
-  const CachedImageExample({super.key});
-
+class CachedNetworkImage extends ConsumerStatefulWidget {
+  const CachedNetworkImage({
+    super.key,
+    required this.imageLink,
+    this.height,
+    this.width,
+  });
+  final String imageLink;
+  final double? width;
+  final double? height;
   @override
-  _CachedImageExampleState createState() => _CachedImageExampleState();
+  ConsumerState<CachedNetworkImage> createState() => _CachedImageState();
 }
 
-class _CachedImageExampleState extends State<CachedImageExample> {
-  String ?_cachedImagePath;
-  Dio ?_dio;
-
+class _CachedImageState extends ConsumerState<CachedNetworkImage> {
+  final ValueNotifier<String> _loadingProgress = ValueNotifier<String>('');
+  final ValueNotifier<bool> _exists = ValueNotifier<bool>(true);
+  final ValueNotifier<String?> _cachedImagePath = ValueNotifier<String?>(null);
+  final ValueNotifier<bool> _loaded = ValueNotifier<bool>(false);
   @override
   void initState() {
     super.initState();
-    _dio = Dio();
-    _checkIfImageExists();
+
+    _downloadImage(widget.imageLink).then(
+      (value) {
+        _cachedImagePath.value = value.path;
+        _loaded.value = true;
+        _exists.value = true;
+      },
+    );
   }
 
-  Future<void> _checkIfImageExists() async {
-    // Define cache directory
-    Directory tempDir = await getTemporaryDirectory();
-    String tempPath = tempDir.path;
-    String imagePath = '$tempPath/image.jpg';
-
-    // Check if image file exists
-    if (await File(imagePath).exists()) {
-      setState(() {
-        _cachedImagePath = imagePath;
-      });
-    } else {
-      _downloadImage();
-    }
-  }
-
-  Future<void> _downloadImage() async {
-    String url = 'https://buffer.com/cdn-cgi/image/w=1000,fit=contain,q=90,f=auto/library/content/images/size/w1200/2023/09/instagram-image-size.jpg';
+  Future<File> _downloadImage(String? url) async {
+    final dio = Dio();
+    String fileName = url!.split('/').last;
     try {
       // Define cache directory
-      Directory tempDir = await getTemporaryDirectory();
-      String tempPath = tempDir.path;
+      Directory dir = await getApplicationDocumentsDirectory();
+      String filePath = '${dir.path}/$fileName';
+      File file = File(filePath);
+
+      if (await file.exists()) {
+        return file;
+      }
 
       // Download image
-      Response<dynamic> response = await _dio!.download(
+      await dio.download(
         url,
-        '$tempPath/image2.jpg',
+        filePath,
+        onReceiveProgress: (count, total) {
+          _loadingProgress.value =
+              '${(count / total * 100).toStringAsFixed(0)}%';
+        },
       );
 
-      if (response.statusCode == 200) {
-        setState(() {
-          _cachedImagePath = '$tempPath/image.jpg';
-        });
-      }
+      return file;
     } catch (e) {
-      print('Error downloading image: $e');
+      throw Exception('Error opening url file');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Cached Image Example'),
-      ),
-      body: Center(
-        child: _cachedImagePath != null
-            ? Image.file(File(_cachedImagePath!))
-            : const CircularProgressIndicator(),
-      ),
+    return ValueListenableBuilder<bool>(
+      valueListenable: _loaded,
+      builder: (BuildContext context, bool value, child) {
+        if (_loaded.value) {
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              final pxRatio = MediaQuery.of(context).devicePixelRatio;
+              final cacheWidth = constraints.maxWidth * pxRatio;
+              final cacheHeight = constraints.maxHeight * pxRatio;
+              return Image.file(
+                File(_cachedImagePath.value!),
+                fit: BoxFit.fill,
+                cacheHeight: int.tryParse(cacheHeight.toString()),
+                cacheWidth: int.tryParse(cacheWidth.toString()),
+                width: double.infinity,
+                errorBuilder: (context, error, stackTrace) {
+                  return Image.network(
+                    ConstantData.notFoundImage,
+                    fit: BoxFit.fill,
+                    width: double.infinity,
+                  );
+                },
+              );
+            },
+          );
+        } else {
+          return ValueListenableBuilder<bool>(
+            valueListenable: _exists,
+            builder: (BuildContext context, bool value, child) {
+              if (value) {
+                //Replace with your loading UI
+                return ValueListenableBuilder<String>(
+                  valueListenable: _loadingProgress,
+                  builder: (BuildContext context, String value, child) {
+                    return Center(
+                      child: Text(
+                        value,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    );
+                  },
+                );
+              } else {
+                //Replace Error UI
+                return Image.network(
+                  ConstantData.notFoundImage,
+                  fit: BoxFit.fill,
+                  width: double.infinity,
+                );
+              }
+            },
+          );
+        }
+      },
     );
   }
-}
-
-void main() {
-  runApp(const MaterialApp(
-    home: CachedImageExample(),
-  ));
 }
