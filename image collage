@@ -1,0 +1,208 @@
+import 'dart:math';
+
+import 'package:bebrainer/src/core/theme/colors.dart';
+import 'package:bebrainer/src/widgets/common_cached_network_image.dart';
+import 'package:flutter/material.dart';
+
+class PhotoGrid extends StatefulWidget {
+  const PhotoGrid({
+    super.key,
+    required this.imageUrls,
+    this.isFromPostDetails = false,
+  });
+  final List<String>? imageUrls;
+  final bool isFromPostDetails;
+  @override
+  createState() => _PhotoGridState();
+}
+
+class _PhotoGridState extends State<PhotoGrid> {
+  @override
+  Widget build(BuildContext context) {
+    var images = buildImages();
+
+    return widget.isFromPostDetails
+        ? ListView.builder(
+            itemCount: widget.imageUrls?.length,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemBuilder: (context, index) {
+              return SizedBox(
+                height: 400,
+                child: CommonCachedNetworkImage(
+                  imageUrl: widget.imageUrls![index],
+                  // cachedHeight: 272,
+                  // cachedWidth: 484,
+                  height: 400,
+                ),
+              );
+            },
+          )
+        : widget.imageUrls!.length == 1
+            ? GestureDetector(
+                onTap: () {
+                  // context.pushNamed(Routes.postDetails);
+                },
+                child: SizedBox(
+                  height: 200,
+                  child: CommonCachedNetworkImage(
+                    imageUrl: widget.imageUrls![0],
+                    cachedHeight: 272,
+                    cachedWidth: 484,
+                    fit: BoxFit.fitHeight,
+                    width: double.infinity,
+                  ),
+                ),
+              )
+            : widget.imageUrls!.length == 2
+                ? GestureDetector(
+                    onTap: () {
+                      // context.pushNamed(Routes.postDetails);
+                    },
+                    child: SizedBox(
+                      height: 400,
+                      child: Column(
+                        children: [
+                          Flexible(
+                            child: CommonCachedNetworkImage(
+                              imageUrl: widget.imageUrls![0],
+                              cachedHeight: 272,
+                              cachedWidth: 484,
+                              fit: BoxFit.fill,
+                              width: double.infinity,
+                            ),
+                          ),
+                          Flexible(
+                            child: CommonCachedNetworkImage(
+                              imageUrl: widget.imageUrls![1],
+                              cachedHeight: 272,
+                              cachedWidth: 484,
+                              fit: BoxFit.fill,
+                              width: double.infinity,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  )
+                : widget.imageUrls!.length == 3
+                    ? GestureDetector(
+                        onTap: () {
+                          //context.pushNamed(Routes.postDetails);
+                        },
+                        child: SizedBox(
+                          height: 400,
+                          child: Column(
+                            children: [
+                              CommonCachedNetworkImage(
+                                imageUrl: widget.imageUrls![0],
+                                fit: BoxFit.fill,
+                                width: double.infinity,
+                                height: 200,
+                              ),
+                              Flexible(
+                                child: Row(
+                                  children: [
+                                    Flexible(
+                                      child: CommonCachedNetworkImage(
+                                        imageUrl: widget.imageUrls![1],
+                                        fit: BoxFit.fitHeight,
+                                        cachedHeight: 404,
+                                        cachedWidth: 404,
+                                        width: double.infinity,
+                                        height: 200,
+                                      ),
+                                    ),
+                                    Flexible(
+                                      child: CommonCachedNetworkImage(
+                                        imageUrl: widget.imageUrls![2],
+                                        fit: BoxFit.fill,
+                                        cachedHeight: 404,
+                                        cachedWidth: 404,
+                                        height: 200,
+                                        width: double.infinity,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    : GestureDetector(
+                        onTap: () {},
+                        child: GridView(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate:
+                              const SliverGridDelegateWithMaxCrossAxisExtent(
+                            maxCrossAxisExtent: 200,
+                            crossAxisSpacing: 2,
+                            mainAxisSpacing: 2,
+                          ),
+                          children: images,
+                        ),
+                      );
+  }
+
+  List<Widget> buildImages() {
+    int? maxImages = 4;
+    int numImages = widget.imageUrls!.length;
+    return List<Widget>.generate(
+      min(numImages, maxImages),
+      (index) {
+        String imageUrl = widget.imageUrls![index];
+
+        // If its the last image
+        if (index == maxImages - 1) {
+          // Check how many more images are left
+          int remaining = numImages - maxImages;
+
+          // If no more are remaining return a simple image widget
+          if (remaining == 0) {
+            return CommonCachedNetworkImage(
+              imageUrl: imageUrl,
+              fit: BoxFit.fill,
+              cachedHeight: 442,
+              cachedWidth: 442,
+            );
+          } else {
+            // Create the facebook like effect for the last image with number of remaining  images
+            return Stack(
+              fit: StackFit.expand,
+              children: [
+                CommonCachedNetworkImage(
+                  imageUrl: imageUrl,
+                  fit: BoxFit.fill,
+                  cachedHeight: 442,
+                  cachedWidth: 442,
+                ),
+                Positioned.fill(
+                  child: Container(
+                    alignment: Alignment.center,
+                    color: Colors.black54,
+                    child: Text(
+                      '+$remaining',
+                      style: const TextStyle(
+                        fontSize: 32,
+                        color: AppColors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          }
+        } else {
+          return CommonCachedNetworkImage(
+            imageUrl: imageUrl,
+            fit: BoxFit.fill,
+            cachedHeight: 442,
+            cachedWidth: 442,
+          );
+        }
+      },
+    );
+  }
+}
