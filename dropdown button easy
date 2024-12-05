@@ -1,251 +1,59 @@
-import 'package:bcscreatrixhaunt/src/core/theme/colors.dart';
-import 'package:bcscreatrixhaunt/src/core/theme/text_style.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:biggan_obhidhan/src/core/gen/colors.gen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class CommonDropdown extends StatefulWidget {
-  const CommonDropdown({
-    Key? key,
-    required this.hint,
-    this.value,
-    required this.dropdownItems,
-    this.onChanged,
-    this.selectedItemBuilder,
-    this.hintAlignment,
-    this.valueAlignment,
-    this.buttonHeight,
-    this.buttonWidth,
-    this.buttonPadding,
-    this.buttonDecoration,
-    this.buttonElevation,
+class CommonPopupMenu extends ConsumerWidget {
+  const CommonPopupMenu({
+    super.key,
+    required this.onSelected,
+    required this.data,
+    this.selectedValue,
     this.icon,
-    this.iconSize,
-    this.iconEnabledColor,
-    this.iconDisabledColor,
-    this.itemHeight,
-    this.itemPadding,
-    this.dropdownHeight,
-    this.dropdownWidth,
-    this.dropdownPadding,
-    this.dropdownDecoration,
-    this.dropdownElevation,
-    this.scrollbarRadius,
-    this.scrollbarThickness,
-    this.scrollbarAlwaysShow,
-    this.offset,
-    this.buttonRadius,
-    this.buttonBorderColor,
-    this.buttonColor,
-    this.buttonBorderWidth,
-    this.buttonHintStyle,
-    this.buttonTextStyle,
-    this.isMultiSelect = false,
-    this.onItemsSelected,
-    this.updateSelectedItems,
-  }) : super(key: key);
-
-  final String hint;
-  final String? value;
-  final List<String> dropdownItems;
-  final ValueChanged<String?>? onChanged;
-  final DropdownButtonBuilder? selectedItemBuilder;
-  final Alignment? hintAlignment;
-  final Alignment? valueAlignment;
-  final double? buttonHeight, buttonWidth;
-  final EdgeInsetsGeometry? buttonPadding;
-  final BoxDecoration? buttonDecoration;
-  final int? buttonElevation;
-  final Widget? icon;
-  final double? iconSize;
-  final Color? iconEnabledColor;
-  final Color? iconDisabledColor;
-  final double? itemHeight;
-  final EdgeInsetsGeometry? itemPadding;
-  final double? dropdownHeight, dropdownWidth;
-  final EdgeInsetsGeometry? dropdownPadding;
-  final BoxDecoration? dropdownDecoration;
-  final int? dropdownElevation;
-  final Radius? scrollbarRadius;
-  final double? scrollbarThickness;
-  final bool? scrollbarAlwaysShow;
-  final Offset? offset;
-  final double? buttonRadius;
-  final Color? buttonBorderColor;
-  final Color? buttonColor;
-  final double? buttonBorderWidth;
-  final TextStyle? buttonHintStyle;
-  final TextStyle? buttonTextStyle;
-  final bool? isMultiSelect;
-  final Function(List<String>?)? onItemsSelected;
-  final List<String>? updateSelectedItems;
-
+  });
+  final void Function(String)? onSelected;
+  final List<String> data;
+  final String? selectedValue;
+  final IconData? icon;
   @override
-  State<CommonDropdown> createState() => _CommonDropdownState();
-}
-
-class _CommonDropdownState extends State<CommonDropdown> {
-  List<String> selectedMultipleItems = [];
-
-  @override
-  void initState() {
-    super.initState();
-    if (widget.isMultiSelect == true && widget.updateSelectedItems != null) {
-      selectedMultipleItems = widget.updateSelectedItems ?? [];
-      setState(() {});
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return DropdownButtonHideUnderline(
-      child: DropdownButton2(
-        isExpanded: true,
-        style: widget.buttonTextStyle,
-        hint: Container(
-          alignment: widget.hintAlignment,
-          child: Text(
-            widget.hint,
-            overflow: TextOverflow.ellipsis,
-            maxLines: 1,
-            style: widget.buttonHintStyle ??
-                AppTextStyle.medium12.copyWith(
-                  color: AppColors.lightBlack40,
+  Widget build(BuildContext context, WidgetRef ref) {
+    return PopupMenuButton<String>(
+      color: AppColors.primary,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      onSelected: onSelected,
+      itemBuilder: (context) {
+        return [
+          for (var value in data)
+            PopupMenuItem(
+              value: value,
+              child: Text(
+                value,
+                style: const TextStyle(
+                  color: Colors.white,
                 ),
-          ),
-        ),
-        value: (widget.isMultiSelect == true)
-            ? (selectedMultipleItems.isEmpty
-                ? null
-                : selectedMultipleItems.last)
-            : widget.value,
-        items: widget.dropdownItems
-            .map((item) => DropdownMenuItem<String>(
-                  value: item,
-                  enabled: widget.isMultiSelect == true ? false : true,
-                  child: widget.isMultiSelect == true
-                      ? StatefulBuilder(
-                          builder: (context, menuSetState) {
-                            final isSelected =
-                                selectedMultipleItems.contains(item);
-                            return InkWell(
-                              onTap: () {
-                                isSelected
-                                    ? selectedMultipleItems.remove(item)
-                                    : selectedMultipleItems.add(item);
-                                //This rebuilds the StatefulWidget to update the button's text
-                                setState(() {});
-                                //This rebuilds the dropdownMenu Widget to update the check mark
-                                menuSetState(() {
-                                  widget
-                                      .onItemsSelected!(selectedMultipleItems);
-                                });
-                              },
-                              child: Container(
-                                height: double.infinity,
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16.0),
-                                child: Row(
-                                  children: [
-                                    isSelected
-                                        ? const Icon(Icons.check_box_outlined)
-                                        : const Icon(
-                                            Icons.check_box_outline_blank),
-                                    const SizedBox(width: 16),
-                                    Expanded(
-                                      child: Text(
-                                        item,
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        )
-                      : Container(
-                          alignment: widget.valueAlignment,
-                          child: Text(
-                            item,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                            style: AppTextStyle.medium12.copyWith(
-                              color: AppColors.lightBlack90,
-                            ),
-                          ),
-                        ),
-                ))
-            .toList(),
-        onChanged: widget.onChanged ?? (value) {},
-        selectedItemBuilder:
-            (widget.isMultiSelect == true && selectedMultipleItems.isNotEmpty)
-                ? (context) {
-                    return widget.dropdownItems.map(
-                      (item) {
-                        return Container(
-                          alignment: AlignmentDirectional.centerStart,
-                          child: Text(
-                            selectedMultipleItems.join(', '),
-                            style: const TextStyle(
-                              fontSize: 14,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            maxLines: 1,
-                          ),
-                        );
-                      },
-                    ).toList();
-                  }
-                : widget.selectedItemBuilder,
-        icon: widget.icon ?? const Icon(Icons.keyboard_arrow_down_rounded),
-        iconSize: widget.iconSize ?? 14,
-        iconEnabledColor: widget.iconEnabledColor ?? AppColors.primary,
-        iconDisabledColor: widget.iconDisabledColor,
-        buttonHeight: widget.buttonHeight ?? 40,
-        buttonWidth: widget.buttonWidth ?? 140,
-        buttonPadding: widget.buttonPadding ??
-            const EdgeInsets.only(
-              left: 15,
-              right: 15,
-            ),
-        buttonDecoration: widget.buttonDecoration ??
-            BoxDecoration(
-              color: widget.buttonColor,
-              borderRadius: BorderRadius.circular(widget.buttonRadius ?? 4),
-              border: Border.all(
-                color: widget.buttonBorderColor ?? Colors.black45,
-                width: widget.buttonBorderWidth ?? 1,
               ),
+            )
+        ];
+      },
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          // Padding(
+          //   padding: const EdgeInsets.only(
+          //     left: 10,
+          //     right: 10,
+          //   ),
+          //   child: Text(selectedValue!),
+          // ),
+          Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: Icon(
+              icon ?? Icons.keyboard_arrow_down_rounded,
+              size: 25,
             ),
-        buttonElevation: widget.buttonElevation,
-        itemHeight: widget.itemHeight ?? 40,
-        itemPadding: widget.itemPadding ??
-            EdgeInsets.only(
-              left: widget.isMultiSelect == true ? 0 : 14,
-              right: widget.isMultiSelect == true ? 0 : 10,
-            ),
-        dropdownMaxHeight: widget.dropdownHeight ?? 200,
-        dropdownWidth: widget.dropdownWidth ?? 180,
-        dropdownPadding: widget.dropdownPadding,
-        dropdownDecoration: widget.dropdownDecoration ??
-            BoxDecoration(
-              borderRadius: BorderRadius.circular(6),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.black.withOpacity(0.2),
-                  blurRadius: 12,
-                  offset: const Offset(0, 6),
-                ),
-              ],
-            ),
-        dropdownElevation: widget.dropdownElevation ?? 8,
-        scrollbarRadius: widget.scrollbarRadius ?? const Radius.circular(40),
-        scrollbarThickness: widget.scrollbarThickness,
-        scrollbarAlwaysShow: widget.scrollbarAlwaysShow,
-        offset: widget.offset,
-        dropdownOverButton: false,
+          )
+        ],
       ),
     );
   }
