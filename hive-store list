@@ -1,0 +1,90 @@
+.....main.dart.....
+  await Hive.initFlutter();
+  Hive.registerAdapter(DownloadedPdfModelAdapter());
+  await Hive.openBox('downloadPdfModel');
+
+.....model......
+  
+@HiveType(typeId: 1)
+class DownloadedPdfModel {
+  @HiveField(0)
+  final String? title;
+  @HiveField(1)
+  final String? link;
+
+  DownloadedPdfModel({
+    this.title,
+    this.link,
+  });
+}
+
+ 
+class PdfDBViewController extends GetxController {
+  List<DownloadedPdfModel> downloadedPdfList = [];
+  List<DownloadedPdfModel> downloadedvodeoList = [];
+  final Rx<PageState> _pageStateController = Rx(PageState.loading);
+
+  get pageState => _pageStateController.value;
+  // reference our box
+  final _myBox = Hive.box('downloadPdfModel');
+  @override
+  void onInit() {
+    super.onInit();
+    initailPDFList();
+  }
+
+  RxBool isAlreadyDownloaded = false.obs;
+  bool checkAlreadyDownloaded(String pdfTitle) {
+    return isAlreadyDownloaded.value = downloadedPdfList
+        .any((downloadedPdfTitle) => downloadedPdfTitle.title == pdfTitle);
+  }
+
+  void savePDFInDB(DownloadedPdfModel downloadPdfModel) {
+    downloadedPdfList.add(downloadPdfModel);
+    updateDataBase().then((v) {
+      initailPDFList();
+    });
+    
+  }
+
+  // run this method if this is the 1st time ever opening this app
+  void createDownloadedPDFInitialData() {
+    downloadedPdfList = <DownloadedPdfModel>[];
+    downloadedvodeoList = <DownloadedPdfModel>[];
+  }
+
+  // load the data from database
+  Future<void> loadData() async {
+    downloadedPdfList = (_myBox.get("downloadedPdfList") as List)
+        .map((e) => e as DownloadedPdfModel)
+        .toList();
+  }
+
+  // update the database
+  Future<void> updateDataBase() async {
+    _myBox.put("downloadedPdfList", downloadedPdfList);
+  }
+
+  void deleteDataBase() {
+    _myBox.clear();
+    _myBox.delete('downloadedPdfList');
+    downloadedPdfList.clear();
+  }
+
+  Future<void> initailPDFList() async {
+    final myBox = Hive.box('downloadPdfModel');
+    try {
+      _pageStateController(PageState.loading);
+      if (myBox.get("downloadedPdfList") == null) {
+        createDownloadedPDFInitialData();
+      } else {
+        // there already exists data
+        await loadData();
+      }
+      _pageStateController(PageState.success);
+    } catch (e) {
+      Get.snackbar('Error', e.toString());
+    }
+    return;
+  }
+}
