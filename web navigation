@@ -1,0 +1,8 @@
+if replace all previous route then  use :
+    html.window.history.replaceState(null, '', Routes.homeTabCompany);
+
+if replace only previous route then use :
+    void replaceBrowserHistory(dynamic data, String path) {
+  html.window.history.replaceState(data, '', path);
+}
+
