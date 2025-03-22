@@ -1,0 +1,93 @@
+....................   API CALL .......................
+
+ Future<List<NoticeModel>> fetchNotices({bool isReload = false}) async {
+    isReload == false ? _pageStateController(PageState.loading) : null;
+
+    try {
+      final res = await repository.fetchNotices(page: currentPage.value);
+      _responseModel = NoticeListResponseModel.fromJson(res);
+      isLastNotice.value = _responseModel.data?.isEmpty ?? false;
+      if (isReload) {
+        noticeList.addAll(_responseModel.data ?? []);
+        currentPage++;
+      } else {
+        noticeList.value = _responseModel.data ?? [];
+      }
+
+      isReload == false ? _pageStateController(PageState.success) : null;
+
+      return noticeList;
+    } catch (e, stackTrace) {
+      Log.error(e.toString());
+      Log.error(stackTrace.toString());
+      _pageStateController(PageState.error);
+      return noticeList;
+    }
+  }
+
+  .................... MAin PAGE ...................
+  import 'package:admission_assistant_latest/src/feature/home/notifications/tab/notice/controller/notice_view_controller.dart';
+import 'package:admission_assistant_latest/src/feature/home/root/widgets/home_latest_updated.dart';
+import 'package:admission_assistant_latest/src/widgets/back_button.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+class AllNoticePage extends GetView<NoticeViewController> {
+  const AllNoticePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('নোটিস আপডেট'),
+        leadingWidth: 50,
+        toolbarHeight: 65,
+        leading: const AppBackButton(),
+      ),
+      body: NotificationListener<ScrollNotification>(
+        onNotification: (notification) {
+          if (notification is ScrollEndNotification &&
+              notification.metrics.extentAfter == 0) {
+            // User has reached the end of the list
+            // Load more data or trigger pagination in flutter
+
+            if (controller.isLastNotice.value ||
+                !controller.isSelectedAllNotice.value) {
+              print('No More Notice');
+              //  SnackBarService.showInfoSnackBar('No More Notice');
+            } else {
+              controller.fetchNotices(isReload: true);
+              // SnackBarService.showInfoSnackBar(
+              //     'Fatch notices from pagination');
+            }
+          }
+          return false;
+        },
+        child: const SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.all(16.0),
+            child: HomeNoticePage(
+              isFromNotice: false,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+.......................LISTVIEW .................
+
+ ListView.builder(
+                padding: const EdgeInsets.only(
+                  top: 20,
+                  bottom: 20,
+                ),
+                itemCount: controller.communityPosts.length,
+                controller: controller.scrollController,
+                shrinkWrap: true,
+                itemBuilder: (_, index) {
+                  return CommunityPostCard(
+                    postModel: controller.communityPosts[index],
+                  );
+                },
+              ),
