@@ -1,0 +1,157 @@
+
+class ChapterTopicSelector extends StatefulWidget {
+  const ChapterTopicSelector({super.key});
+
+  @override
+  State<ChapterTopicSelector> createState() => _ChapterTopicSelectorState();
+}
+
+class _ChapterTopicSelectorState extends State<ChapterTopicSelector> {
+  List<Chapter> chapters = [
+    Chapter(
+      name: 'অধ্যায়ের নাম ১',
+      topics: [Topic(name: 'টপিকের নাম ১.১'), Topic(name: 'টপিকের নাম ১.২')],
+    ),
+    Chapter(
+      name: 'অধ্যায়ের নাম ২',
+      topics: [Topic(name: 'টপিকের নাম ২.১'), Topic(name: 'টপিকের নাম ২.২')],
+    ),
+    Chapter(
+      name: 'অধ্যায়ের নাম ৩',
+      topics: [Topic(name: 'টপিকের নাম ৩.১'), Topic(name: 'টপিকের নাম ৩.২')],
+    ),
+  ];
+
+  List<String> selectedTopics = [];
+
+  void toggleParentCheckbox(int chapterIndex, bool? value) {
+    setState(() {
+      final chapter = chapters[chapterIndex];
+      chapter.isChecked = value ?? false;
+      for (var topic in chapter.topics) {
+        topic.isChecked = chapter.isChecked;
+        if (chapter.isChecked) {
+          if (!selectedTopics.contains(topic.name)) {
+            selectedTopics.add(topic.name);
+          }
+        } else {
+          selectedTopics.remove(topic.name);
+        }
+      }
+    });
+  }
+
+  void toggleTopicCheckbox(int chapterIndex, int topicIndex, bool? value) {
+    setState(() {
+      final chapter = chapters[chapterIndex];
+      final topic = chapter.topics[topicIndex];
+      topic.isChecked = value ?? false;
+
+      // Update parent checkbox
+      chapter.isChecked = chapter.topics.every((t) => t.isChecked);
+
+      // Update selected topics list
+      if (topic.isChecked) {
+        if (!selectedTopics.contains(topic.name)) {
+          selectedTopics.add(topic.name);
+        }
+      } else {
+        selectedTopics.remove(topic.name);
+      }
+    });
+  }
+
+  void toggleExpansion(int chapterIndex) {
+    setState(() {
+      chapters[chapterIndex].isExpanded = !chapters[chapterIndex].isExpanded;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: chapters.length,
+          itemBuilder: (context, chapterIndex) {
+            final chapter = chapters[chapterIndex];
+            return Column(
+              children: [
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: Checkbox(
+                    side: const BorderSide(color: AppColors.borderColor),
+                    visualDensity: const VisualDensity(
+                      horizontal: -4,
+                      vertical: -4,
+                    ),
+                    activeColor: AppColors.primary,
+                    value: chapter.isChecked,
+                    onChanged:
+                        (value) => toggleParentCheckbox(chapterIndex, value),
+                  ),
+                  title: Text(chapter.name),
+                  trailing: GestureDetector(
+                    child: Icon(
+                      chapter.isExpanded
+                          ? Icons.keyboard_arrow_down
+                          : Icons.chevron_right,
+                    ),
+                    onTap: () => toggleExpansion(chapterIndex),
+                  ),
+                  onTap: () => toggleExpansion(chapterIndex),
+                ),
+
+                Container(
+                  decoration: ShapeDecoration(
+                    color: const Color(0xFFEFF5F7),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      if (chapter.isExpanded)
+                        ...chapter.topics.asMap().entries.map((entry) {
+                          int topicIndex = entry.key;
+                          Topic topic = entry.value;
+                          return Padding(
+                            padding: const EdgeInsets.only(left: 20.0),
+                            child: ListTile(
+                              contentPadding: EdgeInsets.zero,
+                              visualDensity: const VisualDensity(
+                                horizontal: -4,
+                                vertical: -4,
+                              ),
+                              leading: Checkbox(
+                                side: const BorderSide(
+                                  color: AppColors.borderColor,
+                                ),
+                                activeColor: AppColors.primary,
+                                value: topic.isChecked,
+                                onChanged:
+                                    (value) => toggleTopicCheckbox(
+                                      chapterIndex,
+                                      topicIndex,
+                                      value,
+                                    ),
+                              ),
+                              title: Text(topic.name),
+                            ),
+                          );
+                        }),
+                    ],
+                  ),
+                ),
+
+                const Divider(color: AppColors.borderColor, height: .1),
+              ],
+            );
+          },
+        ),
+      ],
+    );
+  }
+}
