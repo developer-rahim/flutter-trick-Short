@@ -1,0 +1,238 @@
+import 'package:astha/src/core/theme/colors.dart';
+import 'package:flutter/material.dart';
+
+class Expandile extends StatefulWidget {
+  final Color primaryColor;
+  final Color? validTextColor;
+  final String title;
+  final String? description;
+  final List<Widget> children;
+  final Widget? footer;
+  final bool autoHide;
+  final int autoHideDuration;
+  final VoidCallback? onTap;
+  final dynamic leading;
+  final double elevation;
+  final EdgeInsetsGeometry? contentPadding;
+  final bool initialyExpanded;
+  final int? maxDescriptionLines;
+  final bool isValid;
+  final EdgeInsets? padding;
+
+  const Expandile({
+    super.key,
+    required this.primaryColor,
+    this.validTextColor,
+    required this.title,
+    this.description,
+    this.children = const <Widget>[],
+    this.footer,
+    this.autoHide = false,
+    this.autoHideDuration = 300,
+    this.onTap,
+    this.leading,
+    this.elevation = 0.0,
+    this.contentPadding,
+    this.initialyExpanded = false,
+    this.maxDescriptionLines,
+    this.isValid = false,
+    this.padding,
+  });
+
+  @override
+  State<Expandile> createState() => _ExpandileState();
+}
+
+class _ExpandileState extends State<Expandile>
+    with SingleTickerProviderStateMixin {
+  bool expanded = false;
+
+  Color get textColor => widget.isValid
+      ? (widget.validTextColor ?? Colors.white)
+      : widget.primaryColor;
+
+  @override
+  void initState() {
+    expanded = widget.initialyExpanded;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: widget.padding ?? const EdgeInsets.only(bottom: 10),
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.primary.withAlpha(10),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: AppColors.white, width: .5),
+        ),
+        child: Column(
+          children: <Widget>[infoTile(), childrenWidgets(), footerWidget()],
+        ),
+      ),
+    );
+  }
+
+  Widget infoTile() {
+    return ListTile(
+      contentPadding: widget.contentPadding,
+      onTap: widget.onTap ?? changeExpansionFn,
+      leading: _leading(),
+      title: _infoTitle(),
+      subtitle: _infoSubtitle(),
+      trailing: _expansionButton(),
+    );
+  }
+
+  Widget? _leading() {
+    if (widget.leading is Widget) return widget.leading as Widget;
+    if (widget.leading is IconData) {
+      return Icon(widget.leading as IconData, color: textColor);
+    }
+    return null;
+  }
+
+  Widget _infoTitle() {
+    return Text(
+      widget.title,
+      style: const TextStyle(
+        fontWeight: FontWeight.w500,
+        fontSize: 15,
+        color: AppColors.lightBlack80,
+      ),
+    );
+  }
+
+  Widget? _infoSubtitle() {
+    if (widget.description == null) return null;
+    return Text(
+      widget.description!,
+      maxLines: widget.maxDescriptionLines ?? 3,
+      overflow: TextOverflow.ellipsis,
+    );
+  }
+
+  Widget _expansionButton() {
+    return AnimatedRotation(
+      duration: const Duration(milliseconds: 300),
+      turns: expanded ? 0.5 : 0.0, // 180° rotation
+      child: const Icon(
+        Icons.expand_more,
+        color: AppColors.lightBlack80,
+        size: 22,
+      ),
+    );
+  }
+
+  Widget childrenWidgets() {
+    return AnimatedExpand(
+      expand: expanded,primaryColor: widget.primaryColor,
+      child: Column(children: widget.children),
+    );
+  }
+
+  Widget footerWidget() {
+    if (widget.footer == null) return const SizedBox.shrink();
+    return widget.footer!;
+  }
+
+  Future<void> changeExpansionFn() async {
+    if (widget.autoHide) {
+      if (expanded) return;
+      setState(() => expanded = true);
+      await Future.delayed(Duration(milliseconds: widget.autoHideDuration));
+      if (mounted) setState(() => expanded = false);
+    } else {
+      setState(() => expanded = !expanded);
+    }
+  }
+}
+
+class AnimatedExpand extends StatefulWidget {
+  final Widget child;
+  final bool expand;
+  final Duration duration;
+  final Color primaryColor;
+
+  const AnimatedExpand({
+    super.key,
+    required this.child,
+    required this.expand,
+    required this.primaryColor,
+    this.duration = const Duration(milliseconds: 300),
+  });
+
+  @override
+  State<AnimatedExpand> createState() => _AnimatedExpandState();
+}
+
+class _AnimatedExpandState extends State<AnimatedExpand>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _expandAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(vsync: this, duration: widget.duration);
+
+    _expandAnimation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    );
+
+    if (widget.expand) {
+      _controller.value = 1.0;
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant AnimatedExpand oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.expand != oldWidget.expand) {
+      if (widget.expand) {
+        _controller.forward();
+      } else {
+        _controller.reverse();
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizeTransition(
+      sizeFactor: _expandAnimation,
+      axisAlignment: -1,
+      child: FadeTransition(
+        opacity: _expandAnimation,
+        child: Container(
+          width: 424,
+          padding: const EdgeInsets.all(10),
+          decoration: ShapeDecoration(
+            gradient: LinearGradient(
+              begin: const Alignment(0.50, -0.00),
+              end: const Alignment(0.50, 1.00),
+              colors: [
+                const Color(0xFFFCFAFF) /* Color-Primary-Primary-25 */,
+                widget.primaryColor /* Color-Primary-Primary-500 */,
+              ],
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+          child: widget.child,
+        ),
+      ),
+    );
+  }
+}
