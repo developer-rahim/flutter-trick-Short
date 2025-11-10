@@ -1,0 +1,80 @@
+
+String convertToBanglaNumber(String number) {
+  const englishToBanglaDigits = {
+    '0': '০',
+    '1': '১',
+    '2': '২',
+    '3': '৩',
+    '4': '৪',
+    '5': '৫',
+    '6': '৬',
+    '7': '৭',
+    '8': '৮',
+    '9': '৯',
+  };
+  return number.split('').map((e) => englishToBanglaDigits[e] ?? e).join();
+}
+
+const List<String> banglaMonths = [
+  'জানুয়ারি',
+  'ফেব্রুয়ারি',
+  'মার্চ',
+  'এপ্রিল',
+  'মে',
+  'জুন',
+  'জুলাই',
+  'আগস্ট',
+  'সেপ্টেম্বর',
+  'অক্টোবর',
+  'নভেম্বর',
+  'ডিসেম্বর',
+];
+
+/// All Date Converted in Bnagla
+String getFormattedBanglaDateTime(DateTime dateTime) {
+  final day = convertToBanglaNumber(dateTime.day.toString());
+  final month = banglaMonths[dateTime.month - 1];
+  final year = convertToBanglaNumber(dateTime.year.toString());
+
+  int hour = dateTime.hour;
+  final minute = convertToBanglaNumber(
+    dateTime.minute.toString().padLeft(2, '0'),
+  );
+
+  String ampm = 'AM';
+  if (hour >= 12) {
+    ampm = 'PM';
+    if (hour > 12) hour -= 12;
+  }
+  if (hour == 0) hour = 12;
+
+  final hourStr = convertToBanglaNumber(hour.toString());
+
+  return '$day $month $year, $hourStr:$minute $ampm';
+}
+
+/// Only Time  Converted in Bangla
+String getBanglaTimeWithAmPm(DateTime dateTime) {
+  int hour = dateTime.hour;
+  int minute = dateTime.minute;
+
+  String ampm = 'AM';
+  if (hour >= 12) {
+    ampm = 'PM';
+    if (hour > 12) hour -= 12;
+  }
+  if (hour == 0) hour = 12;
+
+  final banglaHour = convertToBanglaNumber(hour.toString().padLeft(2, '0'));
+  final banglaMinute = convertToBanglaNumber(minute.toString().padLeft(2, '0'));
+
+  return '$banglaHour:$banglaMinute $ampm';
+}
+/// Only Date conver in Bangla
+String getBanglaDateOnly(DateTime dateTime) {
+  final day = convertToBanglaNumber(dateTime.day.toString());
+  final month = banglaMonths[dateTime.month - 1];
+  final year = convertToBanglaNumber(dateTime.year.toString());
+
+  return '$day $month $year';
+}
