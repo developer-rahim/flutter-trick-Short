@@ -1,0 +1,99 @@
+class SliderWithPersistentValue extends StatefulWidget {
+  const SliderWithPersistentValue({super.key});
+
+  @override
+  State<SliderWithPersistentValue> createState() =>
+      _SliderWithPersistentValueState();
+}
+
+class _SliderWithPersistentValueState extends State<SliderWithPersistentValue> {
+  double _currentValue = 5;
+  final double _min = 5;
+  final double _max = 60;
+  @override
+  Widget build(BuildContext context) {
+    final double sliderWidth = MediaQuery.of(context).size.width - 40;
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Stack(
+              alignment: AlignmentDirectional.centerStart,
+              children: [
+                // Persistent value indicator
+                Positioned(
+                  left:
+                      ((sliderWidth - 32) *
+                          (_currentValue - _min) /
+                          (_max - _min)),
+                  child: Column(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          _currentValue.toInt().toString(),
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      const Icon(Icons.arrow_drop_down, color: Colors.blue),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 36.0),
+                  child: SliderTheme(
+                    data: SliderTheme.of(context).copyWith(
+                      activeTrackColor: Colors.blue,
+                      inactiveTrackColor: Colors.grey[300],
+                      trackHeight: 6,
+                      thumbColor: Colors.blue,
+                      overlayColor: Colors.transparent,
+                      thumbShape: const RoundSliderThumbShape(
+                        enabledThumbRadius: 12,
+                      ),
+                      overlayShape: const RoundSliderOverlayShape(
+                        overlayRadius: 0,
+                      ),
+                      valueIndicatorShape:
+                          const PaddleSliderValueIndicatorShape(),
+                      showValueIndicator: ShowValueIndicator.never,
+                    ),
+                    child: Slider(
+                      min: _min,
+                      max: _max,
+                      divisions: ((_max - _min) ~/ 1),
+                      value: _currentValue,
+                      onChanged: (value) {
+                        setState(() {
+                          _currentValue = value;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('৫', style: TextStyle(fontSize: 16)),
+                Text('৬০', style: TextStyle(fontSize: 16)),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
