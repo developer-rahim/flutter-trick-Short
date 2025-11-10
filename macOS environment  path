@@ -1,0 +1,24 @@
+#Flutter Path
+export PATH="/Volumes/ExternalStorage/flutter/bin:$PATH"
+## [Completion]
+## Completion scripts setup. Remove the following line to uninstall
+[[ -f /Users/nextivesolution/.dart-cli-completion/zsh-config.zsh ]] && . /Users/nextivesolution/.dart-cli-completion/zsh-config.zsh || true
+## [/Completion]
+
+#Android Sdk
+export ANDROID_HOME=/Volumes/ExternalStorage/Android/sdk
+export PATH=$PATH:$ANDROID_HOME/emulator
+export PATH=$PATH:$ANDROID_HOME/tools
+export PATH=$PATH:$ANDROID_HOME/tools/bin
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+
+#Fvm
+export FVM_CACHE=/Volumes/ExternalStorage/fvm_cache
+export FVM_CACHE_PATH="/Volumes/ExternalStorage/fvm"
+export PATH="$PATH":"//Volumes/ExternalStorage/.pub-cache/bin"
+
+ # pub cached
+export PUB_CACHE=//Volumes/ExternalStorage/.pub-cache
+
+#gradle
+export GRADLE_USER_HOME=/Volumes/ExternalStorage/.gradle
