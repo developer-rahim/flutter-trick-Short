@@ -1,0 +1,1 @@
+keytool -export -rfc -alias nextivekey -file ~/Desktop/certificate.pem -keystore ~/Desktop/etestpaper.jks
